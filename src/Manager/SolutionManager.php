@@ -28,6 +28,7 @@ namespace App\Manager;
 
 use App\Solutions\airtable;
 use App\Solutions\cirrusshield;
+use App\Solutions\dynamics;
 use App\Solutions\erpnext;
 use App\Solutions\eventbrite;
 use App\Solutions\facebook;
@@ -97,7 +98,8 @@ class SolutionManager
         airtable $airtable,
         sendinblue $sendinblue,
         internallist $internallist,
-        yousign $yousign
+        yousign $yousign,
+        dynamics $dynamics,
     ) {
         $this->classes = [
             'wordpress' => $wordpress,
@@ -131,6 +133,7 @@ class SolutionManager
             'sendinblue' => $sendinblue,
             'yousign' => $yousign,
             'internallist' => $internallist,
+            'dynamics' => $dynamics,
         ];
     }
 

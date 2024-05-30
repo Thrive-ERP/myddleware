@@ -80,10 +80,42 @@ class DynamicsCore extends Solution
             $this->graphClient = new GraphServiceClient(self::$tokenContext, ['https://graph.microsoft.com/.default']);
             $accessToken = $this->getAppOnlyToken();
             $this->connexion_valide = true;
+            $this->tryGettingData();
         } catch (Exception $e) {
             $error = $e->getMessage();
             $this->logger->error($error);
             return ['error' => $error];
+        }
+    }
+
+    // Permet de récupérer tous les modules accessibles à l'utilisateur
+    public function get_modules($type = 'source')
+    {
+        try {
+            if ('source' == $type) {
+                return [
+                    'users' => 'Users',
+                ];
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function tryGettingData()
+    {
+        
+        try {
+            $userPackage = $this->graphClient->users()->get()->wait();
+
+            // The user's name is in the 'displayName' field
+            $userList = $userPackage->getValue();
+            $userName = $userList[0]->getDisplayName();
+            $cashmir = 'toto';
+
+            echo "User's display name: $userName\n";
+        } catch (\Exception $e) {
+            $this->logger->error('Error when trying to get data: ' . $e->getMessage());
         }
     }
 

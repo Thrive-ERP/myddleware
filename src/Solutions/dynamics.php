@@ -1,4 +1,26 @@
 <?php
+/*********************************************************************************
+ * This file is part of Myddleware.
+ * @package Myddleware
+ * @copyright Copyright (C) 2013 - 2015  Stéphane Faure - CRMconsult EURL
+ * @copyright Copyright (C) 2015 - 2017  Stéphane Faure - Myddleware ltd - contact@myddleware.com
+ * @link http://www.myddleware.com
+ *
+ * This file is part of Myddleware.
+ *
+ * Myddleware is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Myddleware is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Myddleware.  If not, see <http://www.gnu.org/licenses/>.
+ *********************************************************************************/
 
 namespace App\Solutions;
 
@@ -41,11 +63,15 @@ class DynamicsCore extends Solution
 
     public function login($paramConnexion)
     {
-        self::$clientId = $paramConnexion['clientid'];
-        self::$clientSecret = $paramConnexion['clientsecret'];
-        self::$tenantId = $paramConnexion['tenantid'];
+        $encrypter = new \Illuminate\Encryption\Encrypter(substr($this->parameterBagInterface->get('secret'), -16));
+        parent::login($paramConnexion);
+        
+        self::$clientId = $encrypter->decrypt($paramConnexion['clientid']);
+        self::$clientSecret = $encrypter->decrypt($paramConnexion['clientsecret']);
+        self::$tenantId = $encrypter->decrypt($paramConnexion['tenantid']);
     
         $scopes = ['https://graph.microsoft.com/.default'];
+
     
         self::$tokenContext = new ClientCredentialContext(
             self::$tenantId,
@@ -61,17 +87,24 @@ class DynamicsCore extends Solution
             $this->connexion_valide = true;
         } catch (Exception $e) {
             $error = $e->getMessage();
-            $this->logger->error($error);
+            $this->logger->error('Error during login: ' . $error);
+            $this->logger->error('Trace: ' . $e->getTraceAsString());
             return ['error' => $error];
         }
     }
 
     private function getAppOnlyToken() {
         $tokenProvider = new GraphPhpLeagueAccessTokenProvider(self::$tokenContext);
-        return $tokenProvider
-            ->getAuthorizationTokenAsync('https://graph.microsoft.com/.default')
-            ->wait();
+        try {
+            return $tokenProvider
+                ->getAuthorizationTokenAsync('https://graph.microsoft.com/.default')
+                ->wait();
+        } catch (\Exception $e) {
+            $this->logger->error('Error getting authorization token: ' . $e->getMessage());
+            throw $e;
+        }
     }
+
 
     public function get_modules($type = 'source'): array
     {
@@ -129,6 +162,7 @@ class DynamicsCore extends Solution
             return ['error' => $error];
         }
     }
+
     public function read($param)
     {
         $module = $param['module'];
@@ -146,18 +180,18 @@ class DynamicsCore extends Solution
     
             $this->logger->info('Requesting data with query parameters: ' . json_encode($queryParams));
     
-            $userResponse = $this->graphClient->users()
-                ->request($queryParams)
-                ->getAsync()
-                ->wait();
+            $usersRequestBuilder = $this->graphClient->users();
+            $usersResponse = $usersRequestBuilder->get()->wait(); // Wait for the promise to resolve
     
-            foreach ($userResponse->getValue() as $user) {
+            // Iterate over the response
+            foreach ($usersResponse->getValue() as $user) {
                 $row = [];
                 foreach ($param['fields'] as $field) {
                     $row[$field] = $user->$field ?? null;
                 }
                 $row['id'] = $user->getId();
-                $row['date_modified'] = $this->dateTimeToMyddleware($user->getLastModifiedDateTime());
+                // Assuming the last modified date is available directly as a property
+                $row['date_modified'] = $this->dateTimeToMyddleware($user->lastModifiedDateTime);
                 $result[] = $row;
             }
         } catch (\Exception $e) {
@@ -167,6 +201,8 @@ class DynamicsCore extends Solution
     
         return $result;
     }
+    
+    
 
     public function createData($param): array
     {

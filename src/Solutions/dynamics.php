@@ -30,6 +30,8 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Microsoft\Kiota\Authentication\Oauth\ClientCredentialContext;
 use Microsoft\Graph\Core\Authentication\GraphPhpLeagueAccessTokenProvider;
+use Microsoft\Graph\Generated\Users\UsersRequestBuilderGetQueryParameters;
+use Microsoft\Graph\Generated\Users\UsersRequestBuilderGetRequestConfiguration;
 
 class DynamicsCore extends Solution
 {
@@ -63,18 +65,11 @@ class DynamicsCore extends Solution
 
     public function login($paramConnexion)
     {
-        $encrypter = new \Illuminate\Encryption\Encrypter(substr($this->parameterBagInterface->get('secret'), -16));
-        parent::login($paramConnexion);
+         parent::login($paramConnexion);
         
-        self::$clientId = $encrypter->decrypt($paramConnexion['clientid']);
-        self::$clientSecret = $encrypter->decrypt($paramConnexion['clientsecret']);
-        self::$tenantId = $encrypter->decrypt($paramConnexion['tenantid']);
-        // self::$clientId = $paramConnexion['clientid'];
-        // self::$clientSecret = $paramConnexion['clientsecret'];
-        // self::$tenantId = $paramConnexion['tenantid'];
-    
-        $scopes = ['https://graph.microsoft.com/.default'];
-
+        self::$clientId = $this->paramConnexion['clientid'];
+        self::$clientSecret = $this->paramConnexion['clientsecret'];
+        self::$tenantId = $this->paramConnexion['tenantid'];
     
         self::$tokenContext = new ClientCredentialContext(
             self::$tenantId,
@@ -85,7 +80,6 @@ class DynamicsCore extends Solution
         try {
             $this->graphClient = new GraphServiceClient(self::$tokenContext, ['https://graph.microsoft.com/.default']);
             $accessToken = $this->getAppOnlyToken();
-            //$this->logger->info('Access token retrieved successfully: ' . $accessToken);
             $this->connexion_valide = true;
         } catch (Exception $e) {
             $error = $e->getMessage();
@@ -179,34 +173,22 @@ class DynamicsCore extends Solution
                 '$filter' => "createdDateTime ge {$dateRef}",
                 '$top' => $limit
             ];
-    
-            $this->logger->info('Requesting data with query parameters: ' . json_encode($queryParams));
+            
     
             $usersRequestBuilder = $this->graphClient->users();
-            $usersResponse = $usersRequestBuilder->get()->wait(); // Wait for the promise to resolve
+            $usersResponse = $usersRequestBuilder->get()->wait();
     
-            $this->logger->info('User fields: ' . json_encode($usersResponse->getValue()[0]));
-    
-            // Iterate over the response
             foreach ($usersResponse->getValue() as $user) {
                 $row = [];
                 foreach ($param['fields'] as $field) {
                     $row[$field] = $user->$field ?? null;
                 }
+                print_r($param['fields']);
                 $row['id'] = $user->getId();
-                
-                // if (isset($user->createdDateTime)) {
-                //     $row['date_created'] = $this->dateTimeToMyddleware($user->createdDateTime);
-                // } else {
-                //     $row['date_created'] = null; 
-                // }
-                if (isset($user->lastModifiedDateTime)) {
-                    $row['date_modified'] = $this->dateTimeToMyddleware($user->lastModifiedDateTime);
-                } elseif (isset($user->createdDateTime)) {
-                    $row['date_modified'] = $this->dateTimeToMyddleware($user->createdDateTime);
-                } else {
-                    $row['date_modified'] = null; // or some default value
-                }
+                $row['displayName'] = $user->getDisplayName();
+                $row['email'] = $user->getUserPrincipalName();
+                $row['date_modified'] = $this->dateTimeToMyddleware($param['date_ref']);
+        
                 $result[] = $row;
             }
         } catch (\Exception $e) {
@@ -245,6 +227,8 @@ class DynamicsCore extends Solution
                     unset($data['target_id']);
                     $recordResult = $this->graphClient->users()->update($targetId, $data)->wait();
                 }
+
+                $data['job_lock'] = '';
 
                 $response = $recordResult;
                 if ($response) {

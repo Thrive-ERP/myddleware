@@ -52,6 +52,7 @@
     "phan/phan": "4.1.*",
     "phpdocumentor/reflection-docblock": "5.3.*",
     "prestashop/prestashop-webservice-lib": "dev-master",
+    "quickbooks/v3-php-sdk": "^6.1",
     "roave/better-reflection": "^6.5",
     "sendinblue/api-v3-sdk": "^7.4.4",
     "sensio/framework-extra-bundle": "5.6.*",

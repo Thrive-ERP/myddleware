@@ -279,8 +279,8 @@ class quickbooks extends solution
                         foreach($Pay as $key => $values) {
                             if($values->Balance < $values->TotalAmt) {
                                 $values->id = $values->Id;
-                                $values->CreateTime = $values->MetaData->CreateTime ? $this->dateTimeFromMyddleware($values->MetaData->CreateTime) : NULL;
-                                $values->LastUpdatedTime = $values->MetaData->LastUpdatedTime ? $this->dateTimeFromMyddleware($values->MetaData->LastUpdatedTime) : NULL;
+                                $values->CreateTime = $values->MetaData->CreateTime ? $this->dateTimeToMyddleware($values->MetaData->CreateTime) : NULL;
+                                $values->LastUpdatedTime = $values->MetaData->LastUpdatedTime ? $this->dateTimeToMyddleware($values->MetaData->LastUpdatedTime) : NULL;
                                 $values->TotalAmt = $values->TotalAmt;
                                 $values->Balance = $values->Balance;
                                 $values->DueDate = $values->DueDate;
@@ -1258,6 +1258,15 @@ class quickbooks extends solution
         $formattedDateTime = $utcDateTime->format('Y-m-d\TH:i:sP');
 
         return $formattedDateTime;
+    }
+
+    // Function de conversion de datetime format solution à un datetime format Myddleware
+    protected function dateTimeToMyddleware($dateTime)
+    {
+        $date = new \DateTime();
+        $date->setTimestamp($dateTime);
+
+        return $date->format('Y-m-d H:i:s');
     }
     
 

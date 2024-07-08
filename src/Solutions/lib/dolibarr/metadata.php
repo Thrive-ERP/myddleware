@@ -35,7 +35,46 @@ $moduleFields = [
         ]],
         'fournisseur' => ['label' => 'Vendor', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1, 'option' => [
             '1' => 'Yes',
-            '2' => 'No'
+            '0' => 'No'
+        ]],
+        'code_client' => ['label' => 'Customer Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'code_fournisseur' => ['label' => 'Vendor Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'status' => ['label' => 'Status', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0, 'option' => [
+            '0' => 'Closed',
+            '1' => 'Open'
+        ]],
+        'address' => ['label' => 'Address', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'zip' => ['label' => 'Zip', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'town' => ['label' => 'Town', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'country' => ['label' => 'Country', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'state' => ['label' => 'State', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'currency' => ['label' => 'Currency', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'email' => ['label' => 'Email', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'phone' => ['label' => 'Phone', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'fax' => ['label' => 'Fax', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'skype' => ['label' => 'Skype', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'twitter' => ['label' => 'Twitter', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'facebook' => ['label' => 'Facebook', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'linkedin' => ['label' => 'Linkedin', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'url' => ['label' => 'Url', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'date_creation' => ['label' => 'Date Creation', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'date_modification' => ['label' => 'Date Modification', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'country_code' => ['label' => 'Country Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        
+    ],    
+    'societevendor' => [
+        'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'name' => ['label' => 'Third-party name	', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'name_alias' => ['label' => 'Alias name', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'client' => ['label' => 'Prospect / Customer', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1, 'option' => [
+            '2' => 'Prospect',
+            '3' => 'Prospect / Customer',
+            '4' => 'Customer',
+            '0' => 'Not prospect, nor customer'
+        ]],
+        'fournisseur' => ['label' => 'Vendor', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1, 'option' => [
+            '1' => 'Yes',
+            '0' => 'No'
         ]],
         'code_client' => ['label' => 'Customer Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'code_fournisseur' => ['label' => 'Vendor Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],

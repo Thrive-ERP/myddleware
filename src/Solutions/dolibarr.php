@@ -127,10 +127,14 @@ class dolibarr extends solution
                                 $viewName = ucfirst(str_replace('_', '', $value));
                                 if($value == 'societe') {
                                     $viewName = 'Third Party';
+                                } elseif($value == 'societevendor') {
+                                    $viewName = 'Vendor';
                                 }
                                 $moduleArray[$value] = $viewName;
                             }
 
+
+                            $moduleArray['societevendor'] = 'Vendor';
                             $moduleArray['invoices'] = 'Invoices';
                             $moduleArray['supplierinvoices'] = 'Supplier Invoices';
                             $moduleArray['supllierinvoicesettopaid'] = 'Supplier Invoices Payment';
@@ -242,7 +246,7 @@ class dolibarr extends solution
 
             // $dateRefWooFormat = $this->dateTimeFromMyddleware($param['date_ref']);
             // var_dump($param);exit;
-            if($param['module'] == 'societe') {
+            if($param['module'] == 'societe' || $param['module'] == 'societevendor') {
                 $this->dolibarrClient = new curl();
                 $this->dolibarrClient->header = array(
                     'DOLAPIKEY: '.$this->token,
@@ -252,12 +256,21 @@ class dolibarr extends solution
 
                 $date_reference = $this->dolibarrApiDateFormate($param['date_ref']);
                 
-                $data = array(
-                    'sortfield' => 't.rowid',
-                    'sortorder' => 'DESC',
-                    'limit'     => $param['limit'],
-                    'sqlfilters' => "(t.tms:>=:'".$date_reference."')",
-                );
+                if($param['module'] == 'societevendor') {
+                    $data = array(
+                        'sortfield' => 't.rowid',
+                        'sortorder' => 'DESC',
+                        'limit'     => $param['limit'],
+                        'sqlfilters' => "(t.tms:>=:'".$date_reference."') AND (t.fournisseur:=:1)",
+                    );    
+                } else {
+                    $data = array(
+                        'sortfield' => 't.rowid',
+                        'sortorder' => 'DESC',
+                        'limit'     => $param['limit'],
+                        'sqlfilters' => "(t.tms:>=:'".$date_reference."')",
+                    );    
+                }
 
                 $response = $this->dolibarrClient->get($serverurl, $data);
 

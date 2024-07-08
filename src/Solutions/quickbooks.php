@@ -279,8 +279,8 @@ class quickbooks extends solution
                         foreach($Pay as $key => $values) {
                             if($values->Balance < $values->TotalAmt) {
                                 $values->id = $values->Id;
-                                $values->CreateTime = $values->MetaData->CreateTime ? $values->MetaData->CreateTime : NULL;
-                                $values->LastUpdatedTime = $values->MetaData->LastUpdatedTime ? $values->MetaData->LastUpdatedTime : NULL;
+                                $values->CreateTime = $values->MetaData->CreateTime ? $this->dateTimeFromMyddleware($values->MetaData->CreateTime) : NULL;
+                                $values->LastUpdatedTime = $values->MetaData->LastUpdatedTime ? $this->dateTimeFromMyddleware($values->MetaData->LastUpdatedTime) : NULL;
                                 $values->TotalAmt = $values->TotalAmt;
                                 $values->Balance = $values->Balance;
                                 $values->DueDate = $values->DueDate;

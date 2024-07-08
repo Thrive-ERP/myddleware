@@ -1263,10 +1263,7 @@ class quickbooks extends solution
     // Function de conversion de datetime format solution à un datetime format Myddleware
     protected function dateTimeToMyddleware($dateTime)
     {
-        $date = new \DateTime();
-        $date->setTimestamp($dateTime);
-
-        return $date->format('Y-m-d H:i:s');
+        return date('Y-m-d H:i:s', strtotime($dateTime));
     }
     
 

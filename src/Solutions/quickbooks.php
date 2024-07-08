@@ -352,81 +352,106 @@ class quickbooks extends solution
                         $parameter['BillAddr'] = $adressadded;
                     }
                     if($parameter) {
+                        $vendorcustomer = false;
                         if($param['module'] == 'Vendor') {
-                            $query = "SELECT * FROM Vendor WHERE DisplayName = '".$parameter['DisplayName']."'";
-                        } elseif($param['module'] == 'Customer') {
-                            $query = "SELECT * FROM Customer WHERE DisplayName = '".$parameter['DisplayName']."'";
-                        }
-
-                        $qbcustomer = $this->dataService->Query($query);
-
-                        $error = $this->dataService->getLastError();
-                        
-                        if ($error) {
-                            $result[$idDoc] = [
-                                'id' => '-1',
-                                'error' => 'Return from create the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody(),
-                            ];
-                            // throw new \Exception ('Return from read the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody());
-                        }
-
-                        if(isset($qbcustomer) && !empty($qbcustomer) && count($qbcustomer) > 0) {
-                            $qbCustomerId = $qbcustomer[0]->Id;
-                            $result[$idDoc] = [
-                                'id' => $qbCustomerId,
-                                'error' => false,
-                            ];
-                        } else {
-                            $qbCustomerId = '';
-                        }
-
-                        if(!$qbCustomerId) {
-                            if($param['module'] == 'Vendor') {
-                                $customerObj = Vendor::create($parameter);
-                            } elseif($param['module'] == 'Customer') {
-                                $customerObj = Customer::create($parameter);
+                            if($parameter['customer'] != 1 && $parameter['vendor'] == 1) { // if the thirdparty is not customer but is vendor
+                                $vendorcustomer = true;
+                            } else {
+                                $vendorcustomer = false;
                             }
-                            $resultingCustomerObj = $this->dataService->Add($customerObj);
+                        } elseif($param['module'] == 'Customer') {
+                            if($parameter['customer'] == 1 && $parameter['vendor'] == 0) { // id the thirdparty is customer but not a vendor
+                                $vendorcustomer = true;
+                            } else {
+                                $vendorcustomer = false;
+                            }
+                        } 
+
+                        if($vendorcustomer == true) {
+                            if($param['module'] == 'Vendor') {
+                                $query = "SELECT * FROM Vendor WHERE DisplayName = '".$parameter['DisplayName']."'";
+                            } elseif($param['module'] == 'Customer') {
+                                $query = "SELECT * FROM Customer WHERE DisplayName = '".$parameter['DisplayName']."'";
+                            }
+
+                            unset($parameter['customer']);
+                            unset($parameter['vendor']);
+
+                            $qbcustomer = $this->dataService->Query($query);
+
                             $error = $this->dataService->getLastError();
-                            // var_dump($resultingCustomerObj);continue;
+                            
                             if ($error) {
                                 $result[$idDoc] = [
                                     'id' => '-1',
                                     'error' => 'Return from create the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody(),
                                 ];
-			                    // throw new \Exception ('Return from read the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody());
-                            } else {
-                                $qbCustomerId = $resultingCustomerObj->Id;
+                                // throw new \Exception ('Return from read the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody());
+                            }
+
+                            if(isset($qbcustomer) && !empty($qbcustomer) && count($qbcustomer) > 0) {
+                                $qbCustomerId = $qbcustomer[0]->Id;
                                 $result[$idDoc] = [
                                     'id' => $qbCustomerId,
                                     'error' => false,
                                 ];
+                            } else {
+                                $qbCustomerId = '';
                             }
-                        } elseif($qbcustomer) {
-                            $theCustomer = reset($qbcustomer);
-                            $parameter['sparse'] = 'false';
-                            if($param['module'] == 'Vendor') {
-                                $updateCustomer = Vendor::update($theCustomer, $parameter);
-                            } elseif($param['module'] == 'Customer') {
-                                $updateCustomer = Customer::update($theCustomer, $parameter);
-                            }
-                            $resultingCustomerUpdatedObj = $this->dataService->Update($updateCustomer);
-                            $error = $this->dataService->getLastError();
-                            // var_dump($resultingCustomerUpdatedObj);continue;
-                            if ($error) {
+
+                            if(!$qbCustomerId) {
+                                if($param['module'] == 'Vendor') {
+                                    $customerObj = Vendor::create($parameter);
+                                } elseif($param['module'] == 'Customer') {
+                                    $customerObj = Customer::create($parameter);
+                                }
+                                $resultingCustomerObj = $this->dataService->Add($customerObj);
+                                $error = $this->dataService->getLastError();
+                                // var_dump($resultingCustomerObj);continue;
+                                if ($error) {
+                                    $result[$idDoc] = [
+                                        'id' => '-1',
+                                        'error' => 'Return from create the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody(),
+                                    ];
+                                    // throw new \Exception ('Return from read the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody());
+                                } else {
+                                    $qbCustomerId = $resultingCustomerObj->Id;
+                                    $result[$idDoc] = [
+                                        'id' => $qbCustomerId,
+                                        'error' => false,
+                                    ];
+                                }
+                            } elseif($qbcustomer) {
+                                $theCustomer = reset($qbcustomer);
+                                $parameter['sparse'] = 'false';
+                                if($param['module'] == 'Vendor') {
+                                    $updateCustomer = Vendor::update($theCustomer, $parameter);
+                                } elseif($param['module'] == 'Customer') {
+                                    $updateCustomer = Customer::update($theCustomer, $parameter);
+                                }
+                                $resultingCustomerUpdatedObj = $this->dataService->Update($updateCustomer);
+                                $error = $this->dataService->getLastError();
+                                // var_dump($resultingCustomerUpdatedObj);continue;
+                                if ($error) {
+                                    $result[$idDoc] = [
+                                        'id' => '-1',
+                                        'error' => 'Return from create the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody(),
+                                    ];
+                                    // throw new \Exception ('Return from read the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody());
+                                }
+                                $qbCustomerId = $resultingCustomerUpdatedObj->Id;
                                 $result[$idDoc] = [
-                                    'id' => '-1',
-                                    'error' => 'Return from create the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody(),
+                                    'id' => $qbCustomerId,
+                                    'error' => false,
                                 ];
-			                    // throw new \Exception ('Return from read the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody());
+                            } else {
+                                $qbCustomerId = '';
                             }
-				            $qbCustomerId = $resultingCustomerUpdatedObj->Id;
+                        } else {
                             $result[$idDoc] = [
-                                'id' => $qbCustomerId,
+                                'id' => '-1',
                                 'error' => false,
                             ];
-                        } else {
-                            $qbCustomerId = '';
                         }
                     }
 
@@ -465,29 +490,17 @@ class quickbooks extends solution
                         if($key == 'IncomeAccountRefname' || $key == 'IncomeAccountRefvalue') {
                             if($key == 'IncomeAccountRefname') {
                                 if($value) {
-                                    $IncomeAccountRef['name'] = $value;
+                                    $IncomeAccountRef['value'] = $value;
                                 } else {
                                     $IncomeAccountRef['value'] = '79';
                                 }
-                            } elseif($key == 'IncomeAccountRefvalue') {
-                                if($value) {
-                                    $IncomeAccountRef['value'] = $value;
-                                } else {
-                                    $IncomeAccountRef['name'] = 'Sales of Product Income';
-                                }
                             }
                         } elseif($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
-                            if($key == 'ExpenseAccountRefname') {
-                                if($value) {
-                                    $ExpenseAccountRef['name'] = $value;
-                                } else {
-                                    $ExpenseAccountRef['value'] = '80';
-                                }
-                            } elseif($key == 'ExpenseAccountRefvalue') {
+                            if($key == 'ExpenseAccountRefvalue') {
                                 if($value) {
                                     $ExpenseAccountRef['value'] = $value;
                                 } else {
-                                    $ExpenseAccountRef['name'] = 'Cost of Goods Sold';
+                                    $ExpenseAccountRef['value'] = '80';
                                 }
                             }
                         } else {
@@ -495,13 +508,26 @@ class quickbooks extends solution
                         }
                     }
 
-                    if($ExpenseAccountRef) {
-                        $parameter['ExpenseAccountRef'] = $ExpenseAccountRef;
+                    if($parameter['forPurchase'] == 1) {
+                        $parameter['PurchaseCost'] = $parameter['CostOfPurchase'];
+                        if($ExpenseAccountRef) {
+                            $parameter['ExpenseAccountRef'] = $ExpenseAccountRef;
+                        }
                     }
 
-                    if($IncomeAccountRef) {
-                        $parameter['IncomeAccountRef'] = $IncomeAccountRef;
+                    if($parameter['forsell'] == 1) {
+                        if($IncomeAccountRef) {
+                            $parameter['IncomeAccountRef'] = $IncomeAccountRef;
+                        }
                     }
+
+                    if($parameter['service'] == 1 || $parameter['service'] == '1') {
+                        $parameter['Type'] = 'Service';
+                    }
+
+                    unset($parameter['service']);
+                    unset($parameter['forsell']);
+                    unset($parameter['forPurchase']);
 
                     if($parameter) {
 
@@ -802,6 +828,8 @@ class quickbooks extends solution
                     }
                     if($parameter) {
 
+                        unset($parameter['customer']);
+                        unset($parameter['vendor']);
                         if($target_id) {
                             if($param['module'] == 'Vendor') {
 			                    $qbcustomer = $this->dataService->Query("SELECT * FROM Vendor WHERE Id = '".$target_id."'");

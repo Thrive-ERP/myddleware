@@ -60,7 +60,7 @@ $moduleFields = [
         'date_creation' => ['label' => 'Date Creation', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'date_modification' => ['label' => 'Date Modification', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'country_code' => ['label' => 'Country Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
-        
+        'client' => ['label' => 'Client/Customer', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],    
     'societevendor' => [
         'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
@@ -99,7 +99,7 @@ $moduleFields = [
         'date_creation' => ['label' => 'Date Creation', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'date_modification' => ['label' => 'Date Modification', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'country_code' => ['label' => 'Country Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
-        
+        'client' => ['label' => 'Client/Customer', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],
     'product' => [
         'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
@@ -115,6 +115,7 @@ $moduleFields = [
             'HT' => 'With Tax'
         ]],
         'price' => ['label' => 'Price', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'price_ttc' => ['label' => 'Price Inc Tax', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'status' => ['label' => 'Status', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0, 'option' => [
             '1' => 'For Sale',
             '0' => 'Not For Sale'
@@ -125,6 +126,8 @@ $moduleFields = [
         ]],
         'date_creation' => ['label' => 'Date Creation', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'date_modification' => ['label' => 'Date Modification', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'accountancy_code_sell' => ['label' => 'Account sell Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'accountancy_code_buy' => ['label' => 'Account purchase Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],
     'invoices' => [
         'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],

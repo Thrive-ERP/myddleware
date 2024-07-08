@@ -50,6 +50,9 @@ $moduleFields = [
         'PostalCode' => ['label' => 'PostalCode', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'Country' => ['label' => 'Country', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'AlternatePhone' => ['label' => 'AlternatePhone', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'customer' => ['label' => 'Customer', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'vendor' => ['label' => 'Vendor', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'Notes' => ['label' => 'Notes', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],
     'Vendor' => [
         'Id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
@@ -78,6 +81,9 @@ $moduleFields = [
         'PostalCode' => ['label' => 'PostalCode', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'Country' => ['label' => 'Country', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'AlternatePhone' => ['label' => 'AlternatePhone', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'customer' => ['label' => 'Customer', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'vendor' => ['label' => 'Vendor', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'Notes' => ['label' => 'Notes', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         ],
     'Item' => [
         'Id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
@@ -97,6 +103,10 @@ $moduleFields = [
         'ExpenseAccountRefvalue' => ['label' => 'Expense Account Ref Value', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'Description' => ['label' => 'Description', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'PurchaseDesc' => ['label' => 'PurchaseDesc', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'service' => ['label' => 'Service', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'forsell' => ['label' => 'For Sell', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'forPurchase' => ['label' => 'For Purchase', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'CostOfPurchase' => ['label' => 'Purchase Cost', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],
     'Invoice' => [
         'Id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],

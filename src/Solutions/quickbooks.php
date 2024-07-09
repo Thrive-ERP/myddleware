@@ -710,28 +710,43 @@ class quickbooks extends solution
                                 throw new \Exception ("Unable to find the product with name ".$ProductName);
                             }
 
-                            if($val['remise_percent']) {
-                                $totalamount = $val['subprice']*$val['qty'];
-                                $discountAmount += ($totalamount * $val['remise_percent']) / 100;
-                                $finalAmount += $totalamount - $discountAmount;
+                            if($param['module'] == 'Bill') {
+                                $dataLine[] = [
+                                    "Amount" => $val['total_ttc'],
+                                    "DetailType" => $parameter['DetailType'],
+                                    $parameter['DetailType'] => [
+                                        "TaxInclusiveAmt" => $val['total_ttc'],
+                                        "ItemRef" => [
+                                            "value" => $qbProductId
+                                        ],
+                                        "Qty" => $val['qty'],
+                                        // "UnitPrice" => $val['subprice'],
+                                    ]
+                                ];
                             } else {
-                                $totalamount = $val['total_ttc'];
-                                $finalAmount += 0;
-                                $discountAmount += 0; 
-                            }
+                                if($val['remise_percent']) {
+                                    $totalamount = $val['subprice']*$val['qty'];
+                                    $discountAmount += ($totalamount * $val['remise_percent']) / 100;
+                                    $finalAmount += $totalamount - $discountAmount;
+                                } else {
+                                    $totalamount = $val['total_ttc'];
+                                    $finalAmount += 0;
+                                    $discountAmount += 0; 
+                                }
 
-                            $dataLine[] = [
-                                "Amount" => $totalamount,
-                                "DetailType" => $parameter['DetailType'],
-                                $parameter['DetailType'] => [
-                                    "TaxInclusiveAmt" => $totalamount,
-                                    "ItemRef" => [
-                                        "value" => $qbProductId
-								    ],
-                                    "Qty" => $val['qty'],
-                                    "UnitPrice" => $val['subprice'],
-                                ]
-                            ];
+                                $dataLine[] = [
+                                    "Amount" => $totalamount,
+                                    "DetailType" => $parameter['DetailType'],
+                                    $parameter['DetailType'] => [
+                                        "TaxInclusiveAmt" => $totalamount,
+                                        "ItemRef" => [
+                                            "value" => $qbProductId
+                                        ],
+                                        "Qty" => $val['qty'],
+                                        "UnitPrice" => $val['subprice'],
+                                    ]
+                                ];
+                            }
                         }
                     }
 
@@ -1209,28 +1224,43 @@ class quickbooks extends solution
                                 throw new \Exception ("Unable to find the product with name ".$ProductName);
                             }
 
-                            if($val['remise_percent']) {
-                                $totalamount = $val['subprice']*$val['qty'];
-                                $discountAmount += ($totalamount * $val['remise_percent']) / 100;
-                                $finalAmount += $totalamount - $discountAmount;
+                            if($param['module'] == 'Bill') {
+                                $dataLine[] = [
+                                    "Amount" => $val['total_ttc'],
+                                    "DetailType" => $parameter['DetailType'],
+                                    $parameter['DetailType'] => [
+                                        "TaxInclusiveAmt" => $val['total_ttc'],
+                                        "ItemRef" => [
+                                            "value" => $qbProductId
+                                        ],
+                                        "Qty" => $val['qty'],
+                                        // "UnitPrice" => $val['subprice'],
+                                    ]
+                                ];
                             } else {
-                                $totalamount = $val['total_ttc'];
-                                $finalAmount += 0;
-                                $discountAmount += 0; 
+                                if($val['remise_percent']) {
+                                    $totalamount = $val['subprice']*$val['qty'];
+                                    $discountAmount += ($totalamount * $val['remise_percent']) / 100;
+                                    $finalAmount += $totalamount - $discountAmount;
+                                } else {
+                                    $totalamount = $val['total_ttc'];
+                                    $finalAmount += 0;
+                                    $discountAmount += 0; 
+                                }
+                                
+                                $dataLine[] = [
+                                    "Amount" => $totalamount,
+                                    "DetailType" => $parameter['DetailType'],
+                                    $parameter['DetailType'] => [
+                                        "TaxInclusiveAmt" => $totalamount,
+                                        "ItemRef" => [
+                                            "value" => $qbProductId
+                                        ],
+                                        "Qty" => $val['qty'],
+                                        "UnitPrice" => $val['subprice'],
+                                    ]
+                                ];
                             }
-
-                            $dataLine[] = [
-                                "Amount" => $totalamount,
-                                "DetailType" => $parameter['DetailType'],
-                                $parameter['DetailType'] => [
-                                    "TaxInclusiveAmt" => $totalamount,
-                                    "ItemRef" => [
-                                        "value" => $qbProductId
-								    ],
-                                    "Qty" => $val['qty'],
-                                    "UnitPrice" => $val['subprice'],
-                                ]
-                            ];
                         }
                     }
 

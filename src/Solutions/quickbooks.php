@@ -695,8 +695,12 @@ class quickbooks extends solution
                         }
                     }
 
+                    unset($parameter['status']);
+
                     $dataLine = array();
                     if($parameter['Line'] && is_array($parameter['Line'])) {
+                        $finalAmount = 0;
+                        $discountAmount = 0;
                         foreach($parameter['Line'] as $val) {
                             $ProductName = $val['product_ref'];
                             $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
@@ -705,21 +709,45 @@ class quickbooks extends solution
                             } else {
                                 throw new \Exception ("Unable to find the product with name ".$ProductName);
                             }
+
+                            if($val['remise_percent']) {
+                                $totalamount = $val['subprice']*$val['qty'];
+                                $discountAmount += ($totalamount * $val['remise_percent']) / 100;
+                                $finalAmount += $totalamount - $discountAmount;
+                            } else {
+                                $totalamount = $val['total_ttc'];
+                                $finalAmount += 0;
+                                $discountAmount += 0; 
+                            }
+
                             $dataLine[] = [
-                                "Amount" => $val['total_ttc'],
+                                "Amount" => $totalamount,
                                 "DetailType" => $parameter['DetailType'],
                                 $parameter['DetailType'] => [
-                                    "TaxInclusiveAmt" => $val['total_ttc'],
+                                    "TaxInclusiveAmt" => $totalamount,
                                     "ItemRef" => [
                                         "value" => $qbProductId
 								    ],
-                                    "Qty" => $val['qty']
+                                    "Qty" => $val['qty'],
+                                    "UnitPrice" => $val['subprice'],
                                 ]
                             ];
                         }
                     }
 
                     if($dataLine) {
+                        if($discountAmount) {
+                            $dataLine[] = [
+                                'Amount' => $discountAmount,
+                                'DetailType' => 'DiscountLineDetail',
+                                'DiscountLineDetail' => [
+                                    'PercentBased' => false,
+                                    'DiscountAccountRef' => [
+                                        'value' => '86'
+                                    ]
+                                ]
+                            ];
+                        }
                         $parameter['Line'] = $dataLine;
                     }
 
@@ -1170,6 +1198,8 @@ class quickbooks extends solution
 
                     $dataLine = array();
                     if($parameter['Line'] && is_array($parameter['Line'])) {
+                        $finalAmount = 0;
+                        $discountAmount = 0;
                         foreach($parameter['Line'] as $val) {
                             $ProductName = $val['product_ref'];
                             $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
@@ -1178,21 +1208,48 @@ class quickbooks extends solution
                             } else {
                                 throw new \Exception ("Unable to find the product with name ".$ProductName);
                             }
+
+                            if($val['remise_percent']) {
+                                $totalamount = $val['subprice']*$val['qty'];
+                                $discountAmount += ($totalamount * $val['remise_percent']) / 100;
+                                $finalAmount += $totalamount - $discountAmount;
+                            } else {
+                                $totalamount = $val['total_ttc'];
+                                $finalAmount += 0;
+                                $discountAmount += 0; 
+                            }
+
                             $dataLine[] = [
-                                "Amount" => $val['total_ttc'],
+                                "Amount" => $totalamount,
                                 "DetailType" => $parameter['DetailType'],
                                 $parameter['DetailType'] => [
-                                    "TaxInclusiveAmt" => $val['total_ttc'],
+                                    "TaxInclusiveAmt" => $totalamount,
                                     "ItemRef" => [
                                         "value" => $qbProductId
 								    ],
-                                    "Qty" => $val['qty']
+                                    "Qty" => $val['qty'],
+                                    "UnitPrice" => $val['subprice'],
                                 ]
                             ];
                         }
                     }
 
+                    unset($parameter['status']);
+
                     if($dataLine) {
+                        if($discountAmount) {
+                            $dataLine[] = [
+                                'Amount' => $discountAmount,
+                                'DetailType' => 'DiscountLineDetail',
+                                'DiscountLineDetail' => [
+                                    'PercentBased' => false,
+                                    'DiscountAccountRef' => [
+                                        'value' => '86'
+                                    ]
+                                ]
+                            ];
+                        }
+
                         $parameter['Line'] = $dataLine;
                     }
 
@@ -1225,7 +1282,7 @@ class quickbooks extends solution
                         $resultingObj = $this->dataService->Update($theResourceObj);
 
                         $error = $this->dataService->getLastError();
-
+                        // var_dump($error);
                         if ($error) {
                             $result[$idDoc] = [
                                 'id' => '-1',

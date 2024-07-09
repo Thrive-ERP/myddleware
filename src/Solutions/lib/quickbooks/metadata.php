@@ -120,6 +120,7 @@ $moduleFields = [
         'TxnDate' => ['label' => 'TxnDate', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'DueDate' => ['label' => 'DueDate', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'DocNumber' => ['label' => 'DocNumber', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'status' => ['label' => 'Status', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],
     'Bill' => [
         'Id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
@@ -133,6 +134,7 @@ $moduleFields = [
         'TxnDate' => ['label' => 'TxnDate', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'DueDate' => ['label' => 'DueDate', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'DocNumber' => ['label' => 'DocNumber', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'status' => ['label' => 'Status', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],
     'InvoicePaid' => [
         'Id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],

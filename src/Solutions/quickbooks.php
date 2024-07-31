@@ -354,13 +354,13 @@ class quickbooks extends solution
                     if($parameter) {
                         $vendorcustomer = false;
                         if($param['module'] == 'Vendor') {
-                            if($parameter['customer'] != 1 && $parameter['vendor'] == 1) { // if the thirdparty is not customer but is vendor
+                            if(($parameter['customer'] != 1 || $parameter['customer'] != 3) && $parameter['vendor'] == 1) { // if the thirdparty is not customer but is vendor
                                 $vendorcustomer = true;
                             } else {
                                 $vendorcustomer = false;
                             }
                         } elseif($param['module'] == 'Customer') {
-                            if($parameter['customer'] == 1 && $parameter['vendor'] == 0) { // id the thirdparty is customer but not a vendor
+                            if(($parameter['customer'] == 1 || $parameter['customer'] == 3) && $parameter['vendor'] == 0) { // id the thirdparty is customer but not a vendor
                                 $vendorcustomer = true;
                             } else {
                                 $vendorcustomer = false;

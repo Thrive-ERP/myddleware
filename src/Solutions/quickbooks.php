@@ -532,6 +532,11 @@ class quickbooks extends solution
                     unset($parameter['service']);
                     unset($parameter['forsell']);
                     unset($parameter['forPurchase']);
+		    unset($parameter['ExpenseAccountRefname']);
+		    unset($parameter['ExpenseAccountRefvalue']);
+		    unset($parameter['IncomeAccountRefname']);
+		    unset($parameter['IncomeAccountRefvalue']);
+
 
                     if($parameter) {
 
@@ -1049,7 +1054,10 @@ class quickbooks extends solution
                     unset($parameter['service']);
                     unset($parameter['forsell']);
                     unset($parameter['forPurchase']);
-
+		    unset($parameter['ExpenseAccountRefname']);
+		    unset($parameter['ExpenseAccountRefvalue']);
+		    unset($parameter['IncomeAccountRefname']);
+		    unset($parameter['IncomeAccountRefvalue']);
 
                     if($parameter) {
 

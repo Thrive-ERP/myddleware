@@ -495,7 +495,10 @@ class quickbooks extends solution
                                     $IncomeAccountRef['value'] = '79';
                                 }
                             }
-                        } 
+                        } else {
+				$parameter[$key] = $value;
+			}
+			    
 			if($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
                             if($key == 'ExpenseAccountRefvalue') {
                                 if($value) {
@@ -997,34 +1000,28 @@ class quickbooks extends solution
                     $ExpenseAccountRef = array();
                     foreach ($data as $key => $value) {
                         if($key == "target_id") {
-			        	    $target_id = $value;
+			    $target_id = $value;
                             continue;
-                        } elseif($key == 'IncomeAccountRefname' || $key == 'IncomeAccountRefvalue') {
+                        } 
+
+			if($key == 'IncomeAccountRefname' || $key == 'IncomeAccountRefvalue') {
                             if($key == 'IncomeAccountRefname') {
-                                if($value) {
-                                    $IncomeAccountRef['name'] = $value;
-                                } else {
-                                    $IncomeAccountRef['value'] = '79';
-                                }
-                            } elseif($key == 'IncomeAccountRefvalue') {
                                 if($value) {
                                     $IncomeAccountRef['value'] = $value;
                                 } else {
-                                    $IncomeAccountRef['name'] = 'Sales of Product Income';
+                                    $IncomeAccountRef['value'] = '79';
                                 }
                             }
-                        } elseif($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
-                            if($key == 'ExpenseAccountRefname') {
-                                if($value) {
-                                    $ExpenseAccountRef['name'] = $value;
-                                } else {
-                                    $ExpenseAccountRef['value'] = '80';
-                                }
-                            } elseif($key == 'ExpenseAccountRefvalue') {
+                        } else {
+				$parameter[$key] = $value;
+			}
+			    
+			if($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
+                            if($key == 'ExpenseAccountRefvalue') {
                                 if($value) {
                                     $ExpenseAccountRef['value'] = $value;
                                 } else {
-                                    $ExpenseAccountRef['name'] = 'Cost of Goods Sold';
+                                    $ExpenseAccountRef['value'] = '80';
                                 }
                             }
                         } else {
@@ -1032,13 +1029,27 @@ class quickbooks extends solution
                         }
                     }
 
-                    if($ExpenseAccountRef) {
-                        $parameter['ExpenseAccountRef'] = $ExpenseAccountRef;
+                    if($parameter['forPurchase'] == 1) {
+                        $parameter['PurchaseCost'] = $parameter['CostOfPurchase'];
+                        if($ExpenseAccountRef) {
+                            $parameter['ExpenseAccountRef'] = $ExpenseAccountRef;
+                        }
                     }
 
-                    if($IncomeAccountRef) {
-                        $parameter['IncomeAccountRef'] = $IncomeAccountRef;
+                    if($parameter['forsell'] == 1) {
+                        if($IncomeAccountRef) {
+                            $parameter['IncomeAccountRef'] = $IncomeAccountRef;
+                        }
                     }
+
+                    if($parameter['service'] == 1 || $parameter['service'] == '1') {
+                        $parameter['Type'] = 'Service';
+                    }
+
+                    unset($parameter['service']);
+                    unset($parameter['forsell']);
+                    unset($parameter['forPurchase']);
+
 
                     if($parameter) {
 

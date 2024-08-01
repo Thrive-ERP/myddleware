@@ -495,7 +495,8 @@ class quickbooks extends solution
                                     $IncomeAccountRef['value'] = '79';
                                 }
                             }
-                        } elseif($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
+                        } 
+			if($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
                             if($key == 'ExpenseAccountRefvalue') {
                                 if($value) {
                                     $ExpenseAccountRef['value'] = $value;

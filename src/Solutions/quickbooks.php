@@ -488,18 +488,14 @@ class quickbooks extends solution
                     $ExpenseAccountRef = array();
                     foreach ($data as $key => $value) {
                         if($key == 'IncomeAccountRefname' || $key == 'IncomeAccountRefvalue') {
-                            if($key == 'IncomeAccountRefname') {
+                            if($key == 'IncomeAccountRefvalue') {
                                 if($value) {
                                     $IncomeAccountRef['value'] = $value;
                                 } else {
                                     $IncomeAccountRef['value'] = '79';
                                 }
                             }
-                        } else {
-				$parameter[$key] = $value;
-			}
-			    
-			if($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
+                    } elseif($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
                             if($key == 'ExpenseAccountRefvalue') {
                                 if($value) {
                                     $ExpenseAccountRef['value'] = $value;
@@ -532,11 +528,10 @@ class quickbooks extends solution
                     unset($parameter['service']);
                     unset($parameter['forsell']);
                     unset($parameter['forPurchase']);
-		    unset($parameter['ExpenseAccountRefname']);
-		    unset($parameter['ExpenseAccountRefvalue']);
-		    unset($parameter['IncomeAccountRefname']);
-		    unset($parameter['IncomeAccountRefvalue']);
-
+                    unset($parameter['ExpenseAccountRefname']);
+                    unset($parameter['ExpenseAccountRefvalue']);
+                    unset($parameter['IncomeAccountRefname']);
+                    unset($parameter['IncomeAccountRefvalue']);
 
                     if($parameter) {
 
@@ -1005,23 +1000,17 @@ class quickbooks extends solution
                     $ExpenseAccountRef = array();
                     foreach ($data as $key => $value) {
                         if($key == "target_id") {
-			    $target_id = $value;
+			                $target_id = $value;
                             continue;
-                        } 
-
-			if($key == 'IncomeAccountRefname' || $key == 'IncomeAccountRefvalue') {
-                            if($key == 'IncomeAccountRefname') {
+                        } elseif($key == 'IncomeAccountRefname' || $key == 'IncomeAccountRefvalue') {
+                            if($key == 'IncomeAccountRefvalue') {
                                 if($value) {
                                     $IncomeAccountRef['value'] = $value;
                                 } else {
                                     $IncomeAccountRef['value'] = '79';
                                 }
                             }
-                        } else {
-				$parameter[$key] = $value;
-			}
-			    
-			if($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
+                        } elseif($key == 'ExpenseAccountRefname' || $key == 'ExpenseAccountRefvalue') {
                             if($key == 'ExpenseAccountRefvalue') {
                                 if($value) {
                                     $ExpenseAccountRef['value'] = $value;
@@ -1054,10 +1043,10 @@ class quickbooks extends solution
                     unset($parameter['service']);
                     unset($parameter['forsell']);
                     unset($parameter['forPurchase']);
-		    unset($parameter['ExpenseAccountRefname']);
-		    unset($parameter['ExpenseAccountRefvalue']);
-		    unset($parameter['IncomeAccountRefname']);
-		    unset($parameter['IncomeAccountRefvalue']);
+                    unset($parameter['ExpenseAccountRefname']);
+                    unset($parameter['ExpenseAccountRefvalue']);
+                    unset($parameter['IncomeAccountRefname']);
+                    unset($parameter['IncomeAccountRefvalue']);
 
                     if($parameter) {
 

@@ -710,6 +710,7 @@ class quickbooks extends solution
                             $ProductName = $val['product_ref'];
                             $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
                             if(isset($qbProduct) && !empty($qbProduct) && count($qbProduct) > 0) {
+                                // var_dump($qbProduct);exit;
                                 $qbProductId = $qbProduct[0]->Id;
                             } else {
                                 throw new \Exception ("Unable to find the product with name ".$ProductName);
@@ -717,10 +718,10 @@ class quickbooks extends solution
 
                             if($param['module'] == 'Bill') {
                                 $dataLine[] = [
-                                    "Amount" => $val['total_ttc'],
+                                    "Amount" => $val['total_ht'],
                                     "DetailType" => $parameter['DetailType'],
                                     $parameter['DetailType'] => [
-                                        "TaxInclusiveAmt" => $val['total_ttc'],
+                                        "TaxInclusiveAmt" => $val['total_ht'],
                                         "ItemRef" => [
                                             "value" => $qbProductId
                                         ],
@@ -734,7 +735,7 @@ class quickbooks extends solution
                                     $discountAmount += ($totalamount * $val['remise_percent']) / 100;
                                     $finalAmount += $totalamount - $discountAmount;
                                 } else {
-                                    $totalamount = $val['total_ttc'];
+                                    $totalamount = $val['total_ht'];
                                     $finalAmount += 0;
                                     $discountAmount += 0; 
                                 }
@@ -1247,10 +1248,10 @@ class quickbooks extends solution
 
                             if($param['module'] == 'Bill') {
                                 $dataLine[] = [
-                                    "Amount" => $val['total_ttc'],
+                                    "Amount" => $val['total_ht'],
                                     "DetailType" => $parameter['DetailType'],
                                     $parameter['DetailType'] => [
-                                        "TaxInclusiveAmt" => $val['total_ttc'],
+                                        "TaxInclusiveAmt" => $val['total_ht'],
                                         "ItemRef" => [
                                             "value" => $qbProductId
                                         ],
@@ -1264,7 +1265,7 @@ class quickbooks extends solution
                                     $discountAmount += ($totalamount * $val['remise_percent']) / 100;
                                     $finalAmount += $totalamount - $discountAmount;
                                 } else {
-                                    $totalamount = $val['total_ttc'];
+                                    $totalamount = $val['total_ht'];
                                     $finalAmount += 0;
                                     $discountAmount += 0; 
                                 }

@@ -532,6 +532,7 @@ class quickbooks extends solution
                     unset($parameter['ExpenseAccountRefvalue']);
                     unset($parameter['IncomeAccountRefname']);
                     unset($parameter['IncomeAccountRefvalue']);
+                    unset($parameter['CostOfPurchase']);
 
                     if($parameter) {
 
@@ -1054,6 +1055,7 @@ class quickbooks extends solution
                     unset($parameter['ExpenseAccountRefvalue']);
                     unset($parameter['IncomeAccountRefname']);
                     unset($parameter['IncomeAccountRefvalue']);
+                    unset($parameter['CostOfPurchase']);
 
                     // var_dump($parameter);exit;
 

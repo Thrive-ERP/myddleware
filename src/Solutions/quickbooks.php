@@ -758,32 +758,40 @@ class quickbooks extends solution
                                     //     "value": "1",
                                     //     "name": "Services"
                                     //    },
-                                    // $dataLine[][$parameter['DetailType']]["ItemAccountRef"]['value'] = "1"; 
-                                    // $itemrefArray['name'] = '';
+                                    $itemAccountRef = ["value" => "1"];
+                                    $itemrefArray['value'] = '1';
                                 } else {
                                     $descVal = strip_tags($val['desc']);
                                     $itemrefName = "Services";
-                                    // $itemrefArray['value'] = '';
+                                    $itemrefArray['name'] = '';
                                     $itemrefArray['value'] = $qbProductId;
+                                }
+
+                                $dataLineItem = [
+                                    "TaxInclusiveAmt" => $val['total_ttc'] * $val['qty'],
+                                    "ItemRef" => $itemrefArray,
+                                    "TaxCodeRef" => [
+                                        "value" => $taxvalue
+                                    ],
+                                    "Qty" => $val['qty'],
+                                    "UnitPrice" => $val['subprice'],
+                                ];
+
+                                // Add ItemAccountRef only if it was set
+                                if ($itemAccountRef) {
+                                    $dataLineItem["ItemAccountRef"] = $itemAccountRef;
                                 }
 
                                 $dataLine[] = [
                                     "Amount" => $totalamount,
                                     "DetailType" => $parameter['DetailType'],
                                     "Description" => $descVal,
-                                    $parameter['DetailType'] => [
-                                        "TaxInclusiveAmt" => $val['total_ttc']*$val['qty'],
-                                        "ItemRef" => $itemrefArray,
-                                        "TaxCodeRef" => [
-                                            "value" => $taxvalue
-                                        ],
-                                        "Qty" => $val['qty'],
-                                        "UnitPrice" => $val['subprice'],
-                                    ]
+                                    $parameter['DetailType'] => $dataLineItem
                                 ];
                             }
                         }
                     }
+
 
                     if($dataLine) {
                         if($discountAmount) {
@@ -1318,28 +1326,35 @@ class quickbooks extends solution
                                     //     "value": "1",
                                     //     "name": "Services"
                                     //    },
-                                    // $dataLine[][$parameter['DetailType']]["ItemAccountRef"]['value'] = "1"; 
-                                    // $itemrefArray['name'] = '';
+                                    $itemAccountRef = ["value" => "1"];
+                                    $itemrefArray['value'] = '1';
                                 } else {
                                     $descVal = strip_tags($val['desc']);
                                     $itemrefName = "Services";
-                                    // $itemrefArray['value'] = '';
+                                    $itemrefArray['name'] = '';
                                     $itemrefArray['value'] = $qbProductId;
+                                }
+
+                                $dataLineItem = [
+                                    "TaxInclusiveAmt" => $val['total_ttc'] * $val['qty'],
+                                    "ItemRef" => $itemrefArray,
+                                    "TaxCodeRef" => [
+                                        "value" => $taxvalue
+                                    ],
+                                    "Qty" => $val['qty'],
+                                    "UnitPrice" => $val['subprice'],
+                                ];
+
+                                // Add ItemAccountRef only if it was set
+                                if ($itemAccountRef) {
+                                    $dataLineItem["ItemAccountRef"] = $itemAccountRef;
                                 }
 
                                 $dataLine[] = [
                                     "Amount" => $totalamount,
                                     "DetailType" => $parameter['DetailType'],
                                     "Description" => $descVal,
-                                    $parameter['DetailType'] => [
-                                        "TaxInclusiveAmt" => $val['total_ttc']*$val['qty'],
-                                        "ItemRef" => $itemrefArray,
-                                        "TaxCodeRef" => [
-                                            "value" => $taxvalue
-                                        ],
-                                        "Qty" => $val['qty'],
-                                        "UnitPrice" => $val['subprice'],
-                                    ]
+                                    $parameter['DetailType'] => $dataLineItem
                                 ];
                             }
                         }

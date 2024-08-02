@@ -634,7 +634,7 @@ class quickbooks extends solution
                     $adressadded = array();
                     $IncomeAccountRef = array();
                     $ExpenseAccountRef = array();
-		    $parameter['ApplyTaxAfterDiscount'] = false;
+		    $parameter['ApplyTaxAfterDiscount'] = true;
                     foreach ($data as $key => $value) {
                         if($key == 'LinesDetailType') {
                             $parameter['DetailType'] = $value;

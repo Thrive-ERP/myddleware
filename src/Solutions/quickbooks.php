@@ -706,14 +706,14 @@ class quickbooks extends solution
                     if($parameter['Line'] && is_array($parameter['Line'])) {
                         $finalAmount = 0;
                         $discountAmount = 0;
+                        // var_dump($parameter['Line']);
                         foreach($parameter['Line'] as $val) {
                             $ProductName = $val['product_ref'];
                             $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
                             if(isset($qbProduct) && !empty($qbProduct) && count($qbProduct) > 0) {
-                                // var_dump($qbProduct);exit;
                                 $qbProductId = $qbProduct[0]->Id;
                             } else {
-                                throw new \Exception ("Unable to find the product with name ".$ProductName);
+                                $qbProductId = '';
                             }
 
                             if($param['module'] == 'Bill') {
@@ -739,14 +739,43 @@ class quickbooks extends solution
                                     $finalAmount += 0;
                                     $discountAmount += 0; 
                                 }
+                                
+                                if($val['tva_tx'] == 0 || $val['tva_tx'] == "0" || $val['tva_tx'] == "0.0000") {
+                                    $taxvalue = "NON";
+                                } else {
+                                    $taxvalue = 'TAX';
+                                }
+                                // var_dump($val['desc']);
+                                if($val['product_ref'] == '' || $val['product_ref'] == null) {
+                                    if($val['desc']) {
+                                        $descVal = strip_tags($val['desc']);
+                                    } else {
+                                        $descVal = '';
+                                    }
+                                    $itemrefName = '';
+                                    $itemrefArray['name'] = "Services";
+                                    // "ItemAccountRef": {
+                                    //     "value": "1",
+                                    //     "name": "Services"
+                                    //    },
+                                    // $dataLine[][$parameter['DetailType']]["ItemAccountRef"]['value'] = "1"; 
+                                    // $itemrefArray['name'] = '';
+                                } else {
+                                    $descVal = strip_tags($val['desc']);
+                                    $itemrefName = "Services";
+                                    // $itemrefArray['value'] = '';
+                                    $itemrefArray['value'] = $qbProductId;
+                                }
 
                                 $dataLine[] = [
                                     "Amount" => $totalamount,
                                     "DetailType" => $parameter['DetailType'],
+                                    "Description" => $descVal,
                                     $parameter['DetailType'] => [
-                                        "TaxInclusiveAmt" => $totalamount,
-                                        "ItemRef" => [
-                                            "value" => $qbProductId
+                                        "TaxInclusiveAmt" => $val['total_ttc']*$val['qty'],
+                                        "ItemRef" => $itemrefArray,
+                                        "TaxCodeRef" => [
+                                            "value" => $taxvalue
                                         ],
                                         "Qty" => $val['qty'],
                                         "UnitPrice" => $val['subprice'],
@@ -1237,13 +1266,14 @@ class quickbooks extends solution
                     if($parameter['Line'] && is_array($parameter['Line'])) {
                         $finalAmount = 0;
                         $discountAmount = 0;
+                        // var_dump($parameter['Line']);
                         foreach($parameter['Line'] as $val) {
                             $ProductName = $val['product_ref'];
                             $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
                             if(isset($qbProduct) && !empty($qbProduct) && count($qbProduct) > 0) {
                                 $qbProductId = $qbProduct[0]->Id;
                             } else {
-                                throw new \Exception ("Unable to find the product with name ".$ProductName);
+                                $qbProductId = '';
                             }
 
                             if($param['module'] == 'Bill') {
@@ -1270,13 +1300,42 @@ class quickbooks extends solution
                                     $discountAmount += 0; 
                                 }
                                 
+                                if($val['tva_tx'] == 0 || $val['tva_tx'] == "0" || $val['tva_tx'] == "0.0000") {
+                                    $taxvalue = "NON";
+                                } else {
+                                    $taxvalue = 'TAX';
+                                }
+                                // var_dump($val['desc']);
+                                if($val['product_ref'] == '' || $val['product_ref'] == null) {
+                                    if($val['desc']) {
+                                        $descVal = strip_tags($val['desc']);
+                                    } else {
+                                        $descVal = '';
+                                    }
+                                    $itemrefName = '';
+                                    $itemrefArray['name'] = "Services";
+                                    // "ItemAccountRef": {
+                                    //     "value": "1",
+                                    //     "name": "Services"
+                                    //    },
+                                    // $dataLine[][$parameter['DetailType']]["ItemAccountRef"]['value'] = "1"; 
+                                    // $itemrefArray['name'] = '';
+                                } else {
+                                    $descVal = strip_tags($val['desc']);
+                                    $itemrefName = "Services";
+                                    // $itemrefArray['value'] = '';
+                                    $itemrefArray['value'] = $qbProductId;
+                                }
+
                                 $dataLine[] = [
                                     "Amount" => $totalamount,
                                     "DetailType" => $parameter['DetailType'],
+                                    "Description" => $descVal,
                                     $parameter['DetailType'] => [
-                                        "TaxInclusiveAmt" => $totalamount,
-                                        "ItemRef" => [
-                                            "value" => $qbProductId
+                                        "TaxInclusiveAmt" => $val['total_ttc']*$val['qty'],
+                                        "ItemRef" => $itemrefArray,
+                                        "TaxCodeRef" => [
+                                            "value" => $taxvalue
                                         ],
                                         "Qty" => $val['qty'],
                                         "UnitPrice" => $val['subprice'],
@@ -1287,7 +1346,7 @@ class quickbooks extends solution
                     }
 
                     unset($parameter['status']);
-
+                    // var_dump($dataLine);
                     if($dataLine) {
                         if($discountAmount) {
                             $dataLine[] = [

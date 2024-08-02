@@ -1028,12 +1028,19 @@ class quickbooks extends solution
                         if($ExpenseAccountRef) {
                             $parameter['ExpenseAccountRef'] = $ExpenseAccountRef;
                         }
+                    } else {
+                        $parameter['PurchaseCost'] = '';
+                        $parameter['PurchaseDesc'] = '';
+                        $parameter['ExpenseAccountRef'] = [];
                     }
 
                     if($parameter['forsell'] == 1) {
                         if($IncomeAccountRef) {
                             $parameter['IncomeAccountRef'] = $IncomeAccountRef;
                         }
+                    } else {
+                        
+                        $parameter['IncomeAccountRef'] = [];
                     }
 
                     if($parameter['service'] == 1 || $parameter['service'] == '1') {
@@ -1047,6 +1054,8 @@ class quickbooks extends solution
                     unset($parameter['ExpenseAccountRefvalue']);
                     unset($parameter['IncomeAccountRefname']);
                     unset($parameter['IncomeAccountRefvalue']);
+
+                    // var_dump($parameter);exit;
 
                     if($parameter) {
 
@@ -1081,7 +1090,7 @@ class quickbooks extends solution
 
                             $resultingObj = $this->dataService->Update($Item);
                             $error = $this->dataService->getLastError();
-
+                            // var_dump($error);exit;
                             if ($error) {
                                 $result[$idDoc] = [
                                     'id' => '-1',
@@ -1103,6 +1112,7 @@ class quickbooks extends solution
                             $resultingObj = $this->dataService->Update($Item);
 
                             $error = $this->dataService->getLastError();
+                            // var_dump($error);exit;
                             if ($error) {
                                 $result[$idDoc] = [
                                     'id' => '-1',
@@ -1128,7 +1138,7 @@ class quickbooks extends solution
             }  catch (\Exception $e) {
                 $error = $e->getMessage().' '.$e->getFile().' Line : ( '.$e->getLine().' )';
                 $this->logger->error($error);
-
+                // var_dump($error);exit;
                 return ['error' => $error];
             }
 

@@ -268,7 +268,7 @@ class quickbooks extends solution
 			    $Pay = $this->dataService->Query($query);
 
                 $error = $this->dataService->getLastError();
-
+                
                 if ($error) {
                     $errormessage = 'Return from read the customer with quickbooksapi status code '.$error->getHttpStatusCode().'Helper message is: '.$error->getOAuthHelperError().', Response message is: '.$error->getResponseBody();
                     $this->logger->error($errormessage);
@@ -276,25 +276,29 @@ class quickbooks extends solution
                     return ['error' => $errormessage];
                 } else {
                     if(isset($Pay) && !empty($Pay) && count($Pay) > 0) {
+                        // var_dump($Pay);exit;
+                        $valuesA = array();
                         foreach($Pay as $key => $values) {
                             if($values->Balance < $values->TotalAmt) {
-                                $values->id = $values->Id;
-                                $values->CreateTime = $values->MetaData->CreateTime ? $this->dateTimeToMyddleware($values->MetaData->CreateTime) : NULL;
-                                $values->LastUpdatedTime = $values->MetaData->LastUpdatedTime ? $this->dateTimeToMyddleware($values->MetaData->LastUpdatedTime) : NULL;
-                                $values->TotalAmt = $values->TotalAmt;
-                                $values->Balance = $values->Balance;
-                                $values->DueDate = $values->DueDate;
-                                $values->CustomerRefName = $values->CustomerRef->name;
-                                $values->CustomerRefValue = $values->CustomerRef->value;
+                                $valuesA['Id'] = $values->Id;
+                                $valuesA['DocNumber'] = $values->DocNumber;
+                                $valuesA['id'] = $values->Id;
+                                $valuesA['CreateTime'] = $values->MetaData->CreateTime ? $this->dateTimeToMyddleware($values->MetaData->CreateTime) : NULL;
+                                $valuesA['LastUpdatedTime'] = $values->MetaData->LastUpdatedTime ? $this->dateTimeToMyddleware($values->MetaData->LastUpdatedTime) : NULL;
+                                $valuesA['TotalAmt'] = $values->TotalAmt;
+                                $valuesA['Balance'] = $values->Balance;
+                                $valuesA['DueDate'] = $values->DueDate;
+                                $valuesA['CustomerRefName'] = $values->CustomerRef->name;
+                                $valuesA['CustomerRefValue'] = $values->CustomerRef->value;
                             }
-                            $result[] = (array)$values;
+                            $result[] = $valuesA;
                         }
                     } else {
                         return [];
                     }
                 }
             }
-
+            // var_dump($result);exit;
         } catch (\Exception $e) {
             $error = $e->getMessage().' '.$e->getFile().' Line : ( '.$e->getLine().' )';
             $this->logger->error($error);

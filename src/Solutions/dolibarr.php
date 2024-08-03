@@ -456,66 +456,76 @@ class dolibarr extends solution
                     
 
                     // settopaid
-                    if(!$id) {
-                        throw new \Exception ('Id is missing or ref number is missing');
-                    }
+                    // if(!$id) {
+                    //     $result[$idDoc] = [
+                    //         'id' => '-1',
+                    //         'error' => 'Id is missing or ref number is missing',
+                    //     ];
+                    // }
 
-                    if($param['module'] == 'invoicesettopaid') {
-                        $data = array('id' => $id);
+                    if($id){
+                        if($param['module'] == 'invoicesettopaid') {
+                            $data = array('id' => $id);
 
-                        $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/invoices/'.$id.'/settopaid';
-                    } elseif($param['module'] == 'invoicepayment') {
-                        $data = array(
-                                    'id' => $id,
-                                    'datepaye' => strtotime($parameter['datepaye']),
-                                    'paymentid' => $parameter['paymentid'],
-                                    'closepaidinvoices' => $parameter['closepaidinvoices'],
-                                    'accountid' => $parameter['accountid']
-                                );
-                        
-                        $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/invoices/'.$id.'/payments';
-                    } elseif($param['module'] == 'supllierinvoicesettopaid') {
-                        $data = array(
-                                    'id' => $id,
-                                    'datepaye' => strtotime($parameter['datepaye']),
-                                    'payment_mode_id' => $parameter['payment_mode_id'],
-                                    'closepaidinvoices' => $parameter['closepaidinvoices'],
-                                    'accountid' => $parameter['accountid']
-                                );
-                        
-                        $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/supplierinvoices/'.$id.'/payments';
-                    }
+                            $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/invoices/'.$id.'/settopaid';
+                        } elseif($param['module'] == 'invoicepayment') {
+                            $data = array(
+                                        'id' => $id,
+                                        'datepaye' => strtotime($parameter['datepaye']),
+                                        'paymentid' => $parameter['paymentid'],
+                                        'closepaidinvoices' => $parameter['closepaidinvoices'],
+                                        'accountid' => $parameter['accountid']
+                                    );
+                            
+                            $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/invoices/'.$id.'/payments';
+                        } elseif($param['module'] == 'supllierinvoicesettopaid') {
+                            $data = array(
+                                        'id' => $id,
+                                        'datepaye' => strtotime($parameter['datepaye']),
+                                        'payment_mode_id' => $parameter['payment_mode_id'],
+                                        'closepaidinvoices' => $parameter['closepaidinvoices'],
+                                        'accountid' => $parameter['accountid']
+                                    );
+                            
+                            $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/supplierinvoices/'.$id.'/payments';
+                        }
 
-                    $response = $this->dolibarrClient->post($serverurl, json_encode($data));
-                    // var_dump($response);exit;
-                    if($response) {
-                        if($this->dolibarrClient->info['http_code'] == 200) {
-                            if($param['module'] == 'supllierinvoicesettopaid') {
+                        $response = $this->dolibarrClient->post($serverurl, json_encode($data));
+                        // var_dump($response);exit;
+                        if($response) {
+                            if($this->dolibarrClient->info['http_code'] == 200) {
+                                if($param['module'] == 'supllierinvoicesettopaid') {
+                                    $result[$idDoc] = [
+                                        'id' => $response.'_'.$id,
+                                        'error' => false,
+                                    ];
+                                } elseif($param['module'] == 'invoicepayment') {
+                                    $result[$idDoc] = [
+                                        'id' => $response.'_'.$id,
+                                        'error' => false,
+                                    ];
+                                } elseif($param['module'] == 'invoicesettopaid') {
+                                    $result[$idDoc] = [
+                                        'id' => $id,
+                                        'error' => false,
+                                    ];
+                                }
+                            } else {
                                 $result[$idDoc] = [
-                                    'id' => $response.'_'.$id,
-                                    'error' => false,
-                                ];
-                            } elseif($param['module'] == 'invoicepayment') {
-                                $result[$idDoc] = [
-                                    'id' => $response.'_'.$id,
-                                    'error' => false,
-                                ];
-                            } elseif($param['module'] == 'invoicesettopaid') {
-                                $result[$idDoc] = [
-                                    'id' => $id,
-                                    'error' => false,
+                                    'id' => '-1',
+                                    'error' => 'Something Went wrong',
                                 ];
                             }
                         } else {
                             $result[$idDoc] = [
                                 'id' => '-1',
-                                'error' => 'Something Went wrong',
+                                'error' => $response,
                             ];
                         }
                     } else {
                         $result[$idDoc] = [
                             'id' => '-1',
-                            'error' => $response,
+                            'error' => 'Id is missing or ref number is missing',
                         ];
                     }
                 } else {

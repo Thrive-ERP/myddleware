@@ -28,6 +28,7 @@ use App\Solutions\lib\curl;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 //use Psr\LoggerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Entity\Connector;
 
 use QuickBooksOnline\API\Core\ServiceContext;
 use QuickBooksOnline\API\DataService\DataService;
@@ -89,6 +90,11 @@ class quickbooks extends solution
                 'type' => TextType::class,
                 'label' => 'solution.fields.baseurl',
             ],
+            [
+                'name' => 'connectorId',
+                'type' => TextType::class,
+                'label' => 'solution.fields.connectorId',
+            ],
         ];
     }
 
@@ -110,38 +116,49 @@ class quickbooks extends solution
 
             $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
             $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken($this->paramConnexion['refreshToken']);
-            $accessTokenValue = $accessTokenObj->getAccessToken();
-            $refreshTokenValue = $accessTokenObj->getRefreshToken();
+            // $accessTokenValue = $accessTokenObj->getAccessToken();
+            // $refreshTokenValue = $accessTokenObj->getRefreshToken();
 
-            $this->paramConnexion['accessToken'] = $accessTokenValue;
-            $this->paramConnexion['refreshToken'] = $refreshTokenValue;
 
-            // $qb = $this->entityManager->getRepository(Connector::class)->createQueryBuilder('c');
-            // $qb->select('c', 'cp')->leftjoin('c.connectorParams', 'cp');
+            $connectorid = $this->paramConnexion['connectorId'];
 
-            // if ($this->getUser()->isAdmin()) {
-            //     $qb->where('c.id =:id AND c.deleted = 0')->setParameter('id', $id);
-            // } else {
-            //     $qb->where('c.id =:id and c.createdBy =:createdBy AND c.deleted = 0')->setParameter(['id' => $id, 'createdBy' => $this->getUser()->getId()]);
-            // }
-            // // Detecte si la session est le support ---------
-            // // Infos du connecteur
-            // $connector = $qb->getQuery()->getOneOrNullResult();
-    
-            // if (!$connector) {
-            //     throw $this->createNotFoundException("This connector doesn't exist");
-            // }
-    
-            // if ($this->getUser()->isAdmin()) {
-            //     $qb->where('c.id =:id')->setParameter('id', $id);
-            // } else {
-            //     $qb->where('c.id =:id and c.createdBy =:createdBy')->setParameter(['id' => $id, 'createdBy' => $this->getUser()->getId()]);
-            // }
-            // // Detecte si la session est le support ---------
-            // // Infos du connecteur
-            // $connector = $qb->getQuery()->getOneOrNullResult();
+            if($connectorid && $connectorid > 0) {
+                /*$currentDateTime = new \DateTime($accessTokenObj->getAccessTokenExpiresAt());
 
-            
+                // Get the current date and time
+                $now = new \DateTime();
+                
+                // Calculate the difference
+                $interval = $now->diff($currentDateTime);
+                
+                // Convert the difference to total minutes
+                $totalMinutes = ($interval->days * 24 * 60) +
+                                ($interval->h * 60) +
+                                $interval->i;*/
+
+                // if($totalMinutes < 59) {
+                    $accessTokenValue = $accessTokenObj->getAccessToken();
+                    $refreshTokenValue = $accessTokenObj->getRefreshToken();
+
+                    $encrypter = new \Illuminate\Encryption\Encrypter(substr($this->parameterBagInterface->get('secret'), -16));
+                    $newrefreshtoken = $encrypter->encrypt($refreshTokenValue);
+                    $newaccesstoken = $encrypter->encrypt($accessTokenValue);
+
+
+                    $this->paramConnexion['accessToken'] = $accessTokenValue;
+                    $this->paramConnexion['refreshToken'] = $refreshTokenValue;
+
+                    $sql = "UPDATE connectorparam SET value = '".$newaccesstoken."' WHERE conn_id = $connectorid AND name = 'accessToken'";
+                    $stmt = $this->connection->prepare($sql);
+                    $stmt->execute();
+                    
+
+                    $sqlrefresh = "UPDATE connectorparam SET value = '".$newaccesstoken."' WHERE conn_id = $connectorid AND name = 'refreshToken'";
+                    $stmt = $this->connection->prepare($sql);
+                    $stmt->execute();
+                // }
+                
+            }
 
             $this->connexion_valide = true;
 

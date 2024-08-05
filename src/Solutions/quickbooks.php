@@ -655,7 +655,9 @@ class quickbooks extends solution
                     $adressadded = array();
                     $IncomeAccountRef = array();
                     $ExpenseAccountRef = array();
-		    $parameter['ApplyTaxAfterDiscount'] = true;
+		    if($param['module'] == 'Invoice') {
+		    	$parameter['ApplyTaxAfterDiscount'] = true;
+		    }
                     foreach ($data as $key => $value) {
                         if($key == 'LinesDetailType') {
                             $parameter['DetailType'] = $value;

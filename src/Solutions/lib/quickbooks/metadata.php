@@ -27,7 +27,7 @@ $moduleFields = [
         'Id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'DisplayName' => ['label' => 'DisplayName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'CompanyName' => ['label' => 'CompanyName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
-
+        'CurrencyRef' => ['label' => 'Currency', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'GivenName' => ['label' => 'GivenName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'FullyQualifiedName' => ['label' => 'FullyQualifiedName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'FamilyName' => ['label' => 'FamilyName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
@@ -58,7 +58,7 @@ $moduleFields = [
         'Id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'DisplayName' => ['label' => 'DisplayName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'CompanyName' => ['label' => 'CompanyName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
-
+        'CurrencyRef' => ['label' => 'Currency', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'GivenName' => ['label' => 'GivenName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'FullyQualifiedName' => ['label' => 'FullyQualifiedName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'FamilyName' => ['label' => 'FamilyName', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],

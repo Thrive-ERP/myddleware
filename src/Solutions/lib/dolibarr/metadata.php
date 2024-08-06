@@ -61,6 +61,11 @@ $moduleFields = [
         'date_modification' => ['label' => 'Date Modification', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'country_code' => ['label' => 'Country Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'client' => ['label' => 'Client/Customer', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'multicurrency_code' => ['label' => 'Multicurrency Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'forme_juridique' => ['label' => 'forme_juridique', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'forme_juridique_code' => ['label' => 'forme_juridique_code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'absolute_discount' => ['label' => 'absolute_discount', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'absolute_creditnote' => ['label' => 'absolute_creditnote', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],    
     'societevendor' => [
         'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
@@ -100,6 +105,11 @@ $moduleFields = [
         'date_modification' => ['label' => 'Date Modification', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'country_code' => ['label' => 'Country Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'client' => ['label' => 'Client/Customer', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'multicurrency_code' => ['label' => 'Multicurrency Code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'forme_juridique' => ['label' => 'forme_juridique', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'forme_juridique_code' => ['label' => 'forme_juridique_code', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'absolute_discount' => ['label' => 'absolute_discount', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'absolute_creditnote' => ['label' => 'absolute_creditnote', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
     ],
     'product' => [
         'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],

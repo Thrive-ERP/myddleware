@@ -364,6 +364,10 @@ class quickbooks extends solution
                             }
                         } elseif($key == 'Line1' || $key == 'City' || $key == 'CountrySubDivisionCode' || $key == 'PostalCode' || $key == 'Country') {
                             $adressadded[$key] = $value;
+                        } elseif($key == 'CurrencyRef') {
+                            if($value) {
+                                $parameter[$key] = ['value' => $value];
+                            }
                         } else {
                             $parameter[$key] = $value;
                         }
@@ -928,6 +932,10 @@ class quickbooks extends solution
                             }
                         } elseif($key == 'Line1' || $key == 'City' || $key == 'CountrySubDivisionCode' || $key == 'PostalCode' || $key == 'Country') {
                             $adressadded[$key] = $value;
+                        } elseif($key == 'CurrencyRef') {
+                            if($value) {
+                                $parameter[$key] = ['value' => $value];
+                            }
                         } else {
                             $parameter[$key] = $value;
                         }

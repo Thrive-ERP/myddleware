@@ -869,7 +869,7 @@ class quickbooks extends solution
                         unset($parameter['DiscountAccount']);
                     }
 
-                    var_dump($parameter);
+                    // var_dump($parameter);
                     if($parameter) {
 
                         if($param['module'] == 'Invoice') {
@@ -1475,7 +1475,7 @@ class quickbooks extends solution
                         unset($parameter['DiscountAccount']);
                     }
                     
-                    var_dump($parameter);
+                    // var_dump($parameter);
                     if($parameter) {
                         if($param['module'] == 'Invoice') {
                             $qbInvoice = $this->dataService->Query("SELECT * FROM Invoice WHERE id = '".$target_id."'");

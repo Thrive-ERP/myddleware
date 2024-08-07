@@ -306,15 +306,15 @@ class quickbooks extends solution
                                 $valuesA['DueDate'] = $values->DueDate;
                                 $valuesA['CustomerRefName'] = $values->CustomerRef->name;
                                 $valuesA['CustomerRefValue'] = $values->CustomerRef->value;
+
+                                $result[] = $valuesA;
                             }
-                            $result[] = $valuesA;
                         }
                     } else {
                         return [];
                     }
                 }
             }
-            // var_dump($result);exit;
         } catch (\Exception $e) {
             $error = $e->getMessage().' '.$e->getFile().' Line : ( '.$e->getLine().' )';
             $this->logger->error($error);

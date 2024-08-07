@@ -491,7 +491,7 @@ class dolibarr extends solution
                         }
 
                         $response = $this->dolibarrClient->post($serverurl, json_encode($data));
-                        // var_dump($response);exit;
+                        // var_dump($this->dolibarrClient->info);exit;
                         if($response) {
                             if($this->dolibarrClient->info['http_code'] == 200) {
                                 if($param['module'] == 'supllierinvoicesettopaid') {
@@ -510,16 +510,26 @@ class dolibarr extends solution
                                         'error' => false,
                                     ];
                                 }
+                            } elseif($this->dolibarrClient->info['http_code'] == 304) {
+                                $result[$idDoc] = [
+                                    'id' => $id,
+                                    'error' => false,
+                                ];
                             } else {
                                 $result[$idDoc] = [
                                     'id' => '-1',
                                     'error' => 'Something Went wrong',
                                 ];
                             }
+                        } elseif($this->dolibarrClient->info['http_code'] == 304) {
+                            $result[$idDoc] = [
+                                'id' => $id,
+                                'error' => false,
+                            ];
                         } else {
                             $result[$idDoc] = [
                                 'id' => '-1',
-                                'error' => $response,
+                                'error' => 'Error with Status code '.$this->dolibarrClient->info['http_code'],
                             ];
                         }
                     } else {
@@ -534,10 +544,10 @@ class dolibarr extends solution
                         'error' => 'Balance is not Zero',
                     ];
                 }
+
+                $this->updateDocumentStatus($idDoc, $result[$idDoc], $param);
             }
         }
-
-        $this->updateDocumentStatus($idDoc, $result[$idDoc], $param);
 
         return $result;
 

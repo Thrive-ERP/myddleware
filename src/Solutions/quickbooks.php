@@ -932,9 +932,8 @@ class quickbooks extends solution
                         unset($parameter['Multicurrency']);
                     }
 
-                    if($parameter['DiscountAccount']) {
-                        unset($parameter['DiscountAccount']);
-                    }
+                    unset($parameter['DiscountAccount']);
+                    
 
                     // var_dump($parameter);
                     if($parameter) {
@@ -1609,9 +1608,7 @@ class quickbooks extends solution
                         unset($parameter['Multicurrency']);
                     }
 
-                    if($parameter['DiscountAccount']) {
-                        unset($parameter['DiscountAccount']);
-                    }
+                    unset($parameter['DiscountAccount']);
                     
                     // var_dump($parameter);
                     if($parameter) {

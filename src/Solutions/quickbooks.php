@@ -152,10 +152,9 @@ class quickbooks extends solution
                     $stmt = $this->connection->prepare($sql);
                     $stmt->execute();
                     
-
-                    $sqlrefresh = "UPDATE connectorparam SET value = '".$newaccesstoken."' WHERE conn_id = $connectorid AND name = 'refreshToken'";
-                    $stmt = $this->connection->prepare($sql);
-                    $stmt->execute();
+                    $sqlrefresh = "UPDATE connectorparam SET value = '".$newrefreshtoken."' WHERE conn_id = $connectorid AND name = 'refreshToken'";
+                    $stmtTemp = $this->connection->prepare($sqlrefresh);
+                    $stmtTemp->execute();
                 // }
                 
             }

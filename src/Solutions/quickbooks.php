@@ -280,7 +280,7 @@ class quickbooks extends solution
 
                 $date_reference = $this->dateTimeFromMyddlewareToQuickbooks($param['date_ref']);
 
-                $query = "SELECT * FROM ".$moduleName." WHERE Metadata.LastUpdatedTime >= '".$date_reference."' ORDER BY Metadata.LastUpdatedTime DESC maxresults ".$param['limit'];
+                $query = "SELECT * FROM ".$moduleName." WHERE Metadata.LastUpdatedTime > '".$date_reference."' ORDER BY Metadata.LastUpdatedTime DESC maxresults ".$param['limit'];
 			    $Pay = $this->dataService->Query($query);
 
                 $error = $this->dataService->getLastError();

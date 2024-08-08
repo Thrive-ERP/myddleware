@@ -261,14 +261,14 @@ class dolibarr extends solution
                         'sortfield' => 't.rowid',
                         'sortorder' => 'DESC',
                         'limit'     => $param['limit'],
-                        'sqlfilters' => "(t.tms:>=:'".$date_reference."') AND (t.fournisseur:=:1)",
+                        'sqlfilters' => "(t.tms:>:'".$date_reference."') AND (t.fournisseur:=:1)",
                     );    
                 } else {
                     $data = array(
                         'sortfield' => 't.rowid',
                         'sortorder' => 'DESC',
                         'limit'     => $param['limit'],
-                        'sqlfilters' => "(t.tms:>=:'".$date_reference."')",
+                        'sqlfilters' => "(t.tms:>:'".$date_reference."')",
                     );    
                 }
 
@@ -312,7 +312,7 @@ class dolibarr extends solution
                     'sortfield' => 't.rowid',
                     'sortorder' => 'DESC',
                     'limit'     => $param['limit'],
-                    'sqlfilters' => "(t.tms:>=:'".$date_reference."')",
+                    'sqlfilters' => "(t.tms:>:'".$date_reference."')",
                 );
 
                 $response = $this->dolibarrClient->get($serverurl, $data);
@@ -341,7 +341,7 @@ class dolibarr extends solution
                     'sortfield' => 't.rowid',
                     'sortorder' => 'DESC',
                     'limit'     => $param['limit'],
-                    'sqlfilters' => "(t.tms:>=:'".$date_reference."')",
+                    'sqlfilters' => "(t.tms:>:'".$date_reference."')",
                 );
 
                 $response = $this->dolibarrClient->get($serverurl, $data);

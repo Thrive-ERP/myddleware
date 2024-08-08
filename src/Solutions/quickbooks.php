@@ -846,10 +846,17 @@ class quickbooks extends solution
                                 }
                                 
                                 if($val['tva_tx'] == 0 || $val['tva_tx'] == "0" || $val['tva_tx'] == "0.0000") {
-                                    $taxvalue = "NON";
+                                    	$taxvalue = "NON";
+					if (!(empty($parameter['LineTaxCodeExemptRef']))) {
+                                                $taxvalue = $parameter['LineTaxCodeExemptRef'];
+                                        }
                                 } else {
-                                    $taxvalue = 'TAX';
+                                	$taxvalue = 'TAX';
+					if (!(empty($parameter['LineTaxCodeRef']))) {
+                                        	$taxvalue = $parameter['LineTaxCodeRef'];
+                                	}
                                 }
+
                                 // var_dump($val['desc']);
                                 if($val['product_ref'] == '' || $val['product_ref'] == null) {
                                     if($val['desc']) {
@@ -933,7 +940,8 @@ class quickbooks extends solution
                     }
 
                     unset($parameter['DiscountAccount']);
-                    
+                    unset($parameter['LineTaxCodeRef']);
+		    unset($parameter['LineTaxCodeExemptRef']);
 
                     // var_dump($parameter);
                     if($parameter) {
@@ -1518,10 +1526,17 @@ class quickbooks extends solution
                                 }
                                 
                                 if($val['tva_tx'] == 0 || $val['tva_tx'] == "0" || $val['tva_tx'] == "0.0000") {
-                                    $taxvalue = "NON";
+                                    	$taxvalue = "NON";
+					if (!(empty($parameter['LineTaxCodeExemptRef']))) {
+                                                $taxvalue = $parameter['LineTaxCodeExemptRef'];
+                                        }
                                 } else {
-                                    $taxvalue = 'TAX';
+                                    	$taxvalue = 'TAX';
+					if (!(empty($parameter['LineTaxCodeRef']))) {
+                                        	$taxvalue = $parameter['LineTaxCodeRef'];
+                                	}
                                 }
+
                                 // var_dump($val['desc']);
                                 if($val['product_ref'] == '' || $val['product_ref'] == null) {
                                     if($val['desc']) {
@@ -1590,7 +1605,6 @@ class quickbooks extends solution
                         $parameter['Line'] = $dataLine;
                     }
                     
-
                     if($parameter['Multicurrency'] != true || $parameter['Multicurrency'] != true) {
                         unset($parameter['ExchangeRate']);
                         unset($parameter['CurrencyRef']);
@@ -1609,7 +1623,8 @@ class quickbooks extends solution
                     }
 
                     unset($parameter['DiscountAccount']);
-                    
+                    unset($parameter['LineTaxCodeRef']);
+		    unset($parameter['LineTaxCodeExemptRef']);
                     // var_dump($parameter);
                     if($parameter) {
                         if($param['module'] == 'Invoice') {

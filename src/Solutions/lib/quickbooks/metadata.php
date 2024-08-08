@@ -115,6 +115,7 @@ $moduleFields = [
             'SalesItemLineDetail' => 'SalesItemLineDetail'
         ]],
         'LineTaxCodeRef' => ['label' => 'LineTaxCodeRef', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+	'LineTaxCodeExemptRef' => ['label' => 'LineTaxCodeExemptRef', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'CurrencyRef' => ['label' => 'CurrencyRef', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'ExchangeRate' => ['label' => 'ExchangeRates', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'Multicurrency' => ['label' => 'Multicurrency', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0, 'option' => [
@@ -145,7 +146,8 @@ $moduleFields = [
             'true' => 'true',
             'false' => 'false'
         ]],
-        'LineTaxCodeRef' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'LineTaxCodeRef' => ['label' => 'LineTaxCodeRef', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+	'LineTaxCodeExemptRef' => ['label' => 'LineTaxCodeExemptRef', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'VendorRef' => ['label' => 'VendorRef', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'BillEmail' => ['label' => 'BillEmail', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'TxnDate' => ['label' => 'TxnDate', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],

@@ -140,6 +140,8 @@ class dolibarr extends solution
                             $moduleArray['supllierinvoicesettopaid'] = 'Supplier Invoices Payment';
                             $moduleArray['invoicesettopaid'] = 'Invoices Setto Paid';
                             $moduleArray['invoicepayment'] = 'Invoice Payment';
+                            $moduleArray['fichinter'] = 'Interventions';
+
 
                             return $moduleArray;
                         } else {
@@ -220,6 +222,44 @@ class dolibarr extends solution
 
                 $moduleFields['invoicepayment']['accountid']['option'] = $bankaccounts;
                 $moduleFields['invoicepayment']['paymentid']['option'] = $paymenttypes;
+            }
+
+            if($moduleFields['fichinter']) {
+                $this->dolibarrClient = new curl();
+                $this->dolibarrClient->header = array(
+                    'DOLAPIKEY: '.$this->token,
+                    'Content-Type: application/json',
+                );
+
+                $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/setup/extrafields';
+
+                $data = array(
+                    'sortfield' => 't.pos',
+                    'sortorder' => 'ASC',
+                    'elementtype' => 'fichinter',
+                );
+
+                $response = $this->dolibarrClient->get($serverurl, $data);
+
+                if($response) {
+                    if($this->dolibarrClient->info['http_code'] == 200) {
+                        $responseobj = json_decode($response);
+                        $bankaccounts = array();
+                        if (isset($responseobj->fichinter)) {
+                            foreach ($responseobj->fichinter as $fieldName => $field) {
+                                if (is_object($field) && isset($field->label)) {
+                                    $moduleFields['fichinter']['options_' . str_replace(" ", "_", strtolower($field->label))] = [
+                                        'label' => $field->label,
+                                        'type' => 'varchar(255)',
+                                        'type_bdd' => 'varchar(255)',
+                                        'required' => $field->required,
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
             if (!empty($moduleFields[$module])) {
@@ -409,6 +449,7 @@ class dolibarr extends solution
             $parameters = array();
             $i=0;
             $nb_record = count($param['data']);
+            // var_dump($nb_record);
             foreach($param['data'] as $idDoc => $data) {
 
                 // Check control before create
@@ -491,7 +532,7 @@ class dolibarr extends solution
                         }
 
                         $response = $this->dolibarrClient->post($serverurl, json_encode($data));
-                        // var_dump($this->dolibarrClient->info);exit;
+                        // var_dump($this->dolibarrClient->info);
                         if($response) {
                             if($this->dolibarrClient->info['http_code'] == 200) {
                                 if($param['module'] == 'supllierinvoicesettopaid') {
@@ -542,6 +583,183 @@ class dolibarr extends solution
                     $result[$idDoc] = [
                         'id' => '-1',
                         'error' => 'Balance is not Zero',
+                    ];
+                }
+
+                $this->updateDocumentStatus($idDoc, $result[$idDoc], $param);
+            }
+        }
+
+        if($param['module'] == 'fichinter') {
+
+            $parameters = array();
+            $parameter_options = array();
+            $i=0;
+            $nb_record = count($param['data']);
+            foreach($param['data'] as $idDoc => $data) {
+
+                // Check control before create
+                $data = $this->checkDataBeforeCreate($param, $data, $idDoc);
+
+                // Generate a reference and store it in an array
+                $i++;	
+                $idDocReference['Ref'.$i] = $idDoc;
+                $parameter = array();
+                // $parameter['attributes'] = array('type' => $param['module'], 'referenceId' => 'Ref'.$i);
+                $adressadded = array();
+                foreach ($data as $key => $value) {
+                    $parameter[$key] = $value;
+                    if (strpos($key, "options_") === 0) {
+                        $parameter_option[$key] = $value;
+                    }
+                }
+
+                if($parameter['socname'] && $parameter['socemail']) {
+                    if($parameter['socid']) {
+                        $socid = $parameter['socid'];
+                    } else {
+                        $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/thirdparties';
+                        $data = array(
+                            'sortfield' => 't.rowid',
+                            'sortorder' => 'ASC',
+                            'limit'     => 1,
+                            'sqlfilters' => "(((t.nom:like:'".$parameter['socname']."') or (t.name_alias:like:'".$parameter['socname']."')) AND (t.email:like:'".$parameter['socemail']."'))",
+                        );
+
+                        $response = $this->dolibarrClient->get($serverurl, $data);
+                        if($response) {
+                            if($this->dolibarrClient->info['http_code'] == 200) {
+                                $responseobj = json_decode($response);
+                                $moduleArray = array();
+                                foreach($responseobj as $value) {
+                                    $socid = $value->id;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if($parameter['socname'] && !$socid) {
+                    if($parameter['socid']) {
+                        $socid = $parameter['socid'];
+                    } else {
+                        $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/thirdparties';
+                        $data = array(
+                            'sortfield' => 't.rowid',
+                            'sortorder' => 'ASC',
+                            'limit'     => 1,
+                            'sqlfilters' => "((t.nom:like:'".$parameter['socname']."') or (t.name_alias:like:'".$parameter['socname']."'))",
+                        );
+
+                        $response = $this->dolibarrClient->get($serverurl, $data);
+                        if($response) {
+                            if($this->dolibarrClient->info['http_code'] == 200) {
+                                $responseobj = json_decode($response);
+                                $moduleArray = array();
+                                foreach($responseobj as $value) {
+                                    $socid = $value->id;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if($parameter['socemail'] && !$socid) {
+                    if($parameter['socid']) {
+                        $socid = $parameter['socid'];
+                    } else {
+                        $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/thirdparties';
+                        $data = array(
+                            'sortfield' => 't.rowid',
+                            'sortorder' => 'ASC',
+                            'limit'     => 1,
+                            'sqlfilters' => "((t.email:like:'".$parameter['socemail']."'))",
+                        );
+
+                        $response = $this->dolibarrClient->get($serverurl, $data);
+                        if($response) {
+                            if($this->dolibarrClient->info['http_code'] == 200) {
+                                $responseobj = json_decode($response);
+                                $moduleArray = array();
+                                foreach($responseobj as $value) {
+                                    $socid = $value->id;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if($socid) {
+                    if($parameter['ref']) {
+                        $ref = $parameter['ref'];
+                    } else {
+                        $ref = "-1";
+                    }
+
+                    if($parameter['fk_project']) {
+                        $fk_project = $parameter['fk_project'];
+                    } else {
+                        $fk_project = "-1";
+                    }
+
+                    if($parameter['description']) {
+                        $data = array(
+                            'ref' => $ref,
+                            'socid' => $socid,
+                            'fk_project' => $fk_project,
+                            'description' => $parameter['description'],
+                        );
+
+                        if($parameter_option) {
+                            $data['array_options'] = $parameter_option;
+                        }
+
+                        $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/interventions';
+
+                        $response = $this->dolibarrClient->post($serverurl, json_encode($data));
+
+                        if($response) {
+                            if($this->dolibarrClient->info['http_code'] == 200) {
+                                $result[$idDoc] = [
+                                    'id' => $response.'_'.$socid,
+                                    'error' => false,
+                                ];
+                            } elseif($this->dolibarrClient->info['http_code'] == 304) {
+                                $result[$idDoc] = [
+                                    'id' => "304_".$socid,
+                                    'error' => false,
+                                ];
+                            } else {
+                                $result[$idDoc] = [
+                                    'id' => '-1',
+                                    'error' => 'Something Went wrong',
+                                ];
+                            }
+                        } elseif($this->dolibarrClient->info['http_code'] == 304) {
+                            $result[$idDoc] = [
+                                'id' => "304_".$socid,
+                                'error' => false,
+                            ];
+                        } else {
+                            $result[$idDoc] = [
+                                'id' => '-1',
+                                'error' => 'Error with Status code '.$this->dolibarrClient->info['http_code'],
+                            ];
+                        }
+
+
+                    } else {
+                        $result[$idDoc] = [
+                            'id' => '-1',
+                            'error' => 'Field description is missing',
+                        ];
+                    }
+
+
+                } else {
+                    $result[$idDoc] = [
+                        'id' => '-1',
+                        'error' => 'Field socid is missing',
                     ];
                 }
 

@@ -284,6 +284,16 @@ $moduleFields = [
         ]],
         'accountid' => ['label' => 'Account Id', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'balance'    => ['label' => 'Remaining Balance', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+    ],
+    'fichinter' => [
+        'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'ref' => ['label' => 'Ref', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'socid' => ['label' => 'Third-Party ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'fk_project' => ['label' => 'Project', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'description' => ['label' => 'Description', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'socname' => ['label' => 'Third-Party Name', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'socemail' => ['label' => 'Third-Party Email', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+
     ]
 ];
 

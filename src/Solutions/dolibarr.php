@@ -141,6 +141,7 @@ class dolibarr extends solution
                             $moduleArray['invoicesettopaid'] = 'Invoices Setto Paid';
                             $moduleArray['invoicepayment'] = 'Invoice Payment';
                             $moduleArray['fichinter'] = 'Interventions';
+                            $moduleArray['fichinter_lines'] = 'Intervention Lines';
 
 
                             return $moduleArray;
@@ -677,6 +678,7 @@ class dolibarr extends solution
                         );
 
                         $response = $this->dolibarrClient->get($serverurl, $data);
+                        // var_dump($response);
                         if($response) {
                             if($this->dolibarrClient->info['http_code'] == 200) {
                                 $responseobj = json_decode($response);
@@ -688,7 +690,7 @@ class dolibarr extends solution
                         }
                     }
                 }
-
+                
                 if($socid) {
                     if($parameter['ref']) {
                         $ref = $parameter['ref'];
@@ -708,6 +710,7 @@ class dolibarr extends solution
                             'socid' => $socid,
                             'fk_project' => $fk_project,
                             'description' => $parameter['description'],
+                            'fk_contrat' => $parameter['fk_contrat'],
                         );
 
                         if($parameter_option) {
@@ -760,6 +763,96 @@ class dolibarr extends solution
                     $result[$idDoc] = [
                         'id' => '-1',
                         'error' => 'Field socid is missing',
+                    ];
+                }
+
+                $this->updateDocumentStatus($idDoc, $result[$idDoc], $param);
+            }
+        }
+
+        if($param['module'] == 'fichinter_lines') {
+
+            $parameters = array();
+            $parameter_options = array();
+            $i=0;
+            $nb_record = count($param['data']);
+            foreach($param['data'] as $idDoc => $data) {
+
+                // Check control before create
+                $data = $this->checkDataBeforeCreate($param, $data, $idDoc);
+
+                // Generate a reference and store it in an array
+                $i++;	
+                $idDocReference['Ref'.$i] = $idDoc;
+                $parameter = array();
+                // $parameter['attributes'] = array('type' => $param['module'], 'referenceId' => 'Ref'.$i);
+                $adressadded = array();
+                foreach ($data as $key => $value) {
+                    $parameter[$key] = $value;
+                    if (strpos($key, "options_") === 0) {
+                        $parameter_option[$key] = $value;
+                    }
+                }
+                
+                if($parameter['fk_fichinter']) {
+                    if($parameter['description']) {
+                        $data = array(
+                            // 'id' => $parameter['fk_fichinter'],
+                            'date' => strtotime($parameter['date']),
+                            'description' => $parameter['description'],
+                            'duree' => $parameter['duree'],
+                        );
+
+                        if($parameter_option) {
+                            $data['array_options'] = $parameter_option;
+                        }
+
+                        $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/interventions/'.$parameter['fk_fichinter'].'/lines';
+
+                        $response = $this->dolibarrClient->post($serverurl, json_encode($data));
+
+                        if($response) {
+                            if($this->dolibarrClient->info['http_code'] == 200) {
+                                $result[$idDoc] = [
+                                    'id' => $response.'_'.$parameter['fk_fichinter'],
+                                    'error' => false,
+                                ];
+                            } elseif($this->dolibarrClient->info['http_code'] == 304) {
+                                $result[$idDoc] = [
+                                    'id' => "304_".$parameter['fk_fichinter'],
+                                    'error' => false,
+                                ];
+                            } else {
+                                $result[$idDoc] = [
+                                    'id' => '-1',
+                                    'error' => 'Something Went wrong',
+                                ];
+                            }
+                        } elseif($this->dolibarrClient->info['http_code'] == 304) {
+                            $result[$idDoc] = [
+                                'id' => "304_".$socid,
+                                'error' => false,
+                            ];
+                        } else {
+                            $result[$idDoc] = [
+                                'id' => '-1',
+                                'error' => 'Error with Status code '.$this->dolibarrClient->info['http_code'],
+                            ];
+                        }
+
+
+                    } else {
+                        $result[$idDoc] = [
+                            'id' => '-1',
+                            'error' => 'Field description is missing',
+                        ];
+                    }
+
+
+                } else {
+                    $result[$idDoc] = [
+                        'id' => '-1',
+                        'error' => 'Field Intervention ID is missing',
                     ];
                 }
 

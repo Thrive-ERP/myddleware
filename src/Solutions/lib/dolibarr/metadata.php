@@ -289,11 +289,20 @@ $moduleFields = [
         'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'ref' => ['label' => 'Ref', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'socid' => ['label' => 'Third-Party ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'fk_contrat' => ['label' => 'Contract ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'fk_project' => ['label' => 'Project', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
         'description' => ['label' => 'Description', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'socname' => ['label' => 'Third-Party Name', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'socemail' => ['label' => 'Third-Party Email', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
 
+    ],
+
+    'fichinter_lines' => [
+        'id' => ['label' => 'ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 0],
+        'fk_fichinter' => ['label' => 'Intervention ID', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'date' => ['label' => 'Date', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'duree' => ['label' => 'Duration', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'description' => ['label' => 'Description', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
     ]
 ];
 

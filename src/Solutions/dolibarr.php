@@ -249,7 +249,7 @@ class dolibarr extends solution
                         if (isset($responseobj->fichinter)) {
                             foreach ($responseobj->fichinter as $fieldName => $field) {
                                 if (is_object($field) && isset($field->label)) {
-                                    $moduleFields['fichinter']['options_' . str_replace(" ", "_", strtolower($field->label))] = [
+                                    $moduleFields['fichinter']['options_' . str_replace(" ", "_", strtolower($fieldName))] = [
                                         'label' => $field->label,
                                         'type' => 'varchar(255)',
                                         'type_bdd' => 'varchar(255)',
@@ -715,6 +715,10 @@ class dolibarr extends solution
 
                         if($parameter_option) {
                             $data['array_options'] = $parameter_option;
+                        }
+
+                        if($parameter['line_duration'] && $parameter['line_date']) {
+                            $data['lines'][] = array('desc' => $parameter['line_descrition'], 'datei' => $parameter['line_date'], 'duration' => $parameter['line_duration']);
                         }
 
                         $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/interventions';

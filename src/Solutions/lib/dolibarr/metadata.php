@@ -294,6 +294,9 @@ $moduleFields = [
         'description' => ['label' => 'Description', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'socname' => ['label' => 'Third-Party Name', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
         'socemail' => ['label' => 'Third-Party Email', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'line_descrition' => ['label' => 'Line Description', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'line_duration' => ['label' => 'Line Duration', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
+        'line_date' => ['label' => 'Line Date', 'type' => 'varchar(255)', 'type_bdd' => 'varchar(255)', 'required' => 1],
 
     ],
 

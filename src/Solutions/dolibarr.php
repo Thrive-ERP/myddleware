@@ -690,7 +690,43 @@ class dolibarr extends solution
                         }
                     }
                 }
+
+                if($parameter['fk_contrat']) {
+                    $contractid = $parameter['fk_contrat'];
+                }
+
+                if($parameter['contract_ref'] && !$contractid) {
+                    $serverurl = $this->paramConnexion['url'].$this->dolibarrurl.'/contracts';
+                    $data = array(
+                        'sortfield' => 't.rowid',
+                        'sortorder' => 'ASC',
+                        'limit'     => 1,
+                        'sqlfilters' => "(t.ref:=:'".$parameter['contract_ref']."')",
+                    );
+
+                    $response = $this->dolibarrClient->get($serverurl, $data);
+                    // var_dump($response);
+                    if($response) {
+                        if($this->dolibarrClient->info['http_code'] == 200) {
+                            $responseobj = json_decode($response);
+                            $moduleArray = array();
+                            foreach($responseobj as $value) {
+                                $contractid = $value->id;
+                            }
+                        }
+                    }
+                }
+
+                if(!$contractid) {
+                    $contractid = '';
+                }
                 
+                if(!$socid) {
+                    if($parameter['default_socid']) {
+                        $socid = $parameter['default_socid'];
+                    }
+                }
+
                 if($socid) {
                     if($parameter['ref']) {
                         $ref = $parameter['ref'];
@@ -710,7 +746,7 @@ class dolibarr extends solution
                             'socid' => $socid,
                             'fk_project' => $fk_project,
                             'description' => $parameter['description'],
-                            'fk_contrat' => $parameter['fk_contrat'],
+                            'fk_contrat' => $contractid,
                         );
 
                         if($parameter_option) {

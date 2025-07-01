@@ -598,6 +598,8 @@ class dolibarr extends solution
             $i=0;
             $nb_record = count($param['data']);
             foreach($param['data'] as $idDoc => $data) {
+		$contractid = '';
+		$socid = '';
 
                 // Check control before create
                 $data = $this->checkDataBeforeCreate($param, $data, $idDoc);

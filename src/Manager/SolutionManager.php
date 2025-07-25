@@ -60,6 +60,8 @@ use App\Solutions\wooeventmanager;
 use App\Solutions\wordpress;
 use App\Solutions\yousign;
 use App\Solutions\zuora;
+use App\Solutions\dolibarr;
+use App\Solutions\quickbooks;
 use Exception;
 
 /**
@@ -118,7 +120,9 @@ class SolutionManager
         internallist $internallist,
         yousign $yousign,
         brevo $brevo,
-        acton $acton
+        acton $acton,
+        dolibarr $dolibarr,
+        quickbooks $quickbooks
     ) {
 		// Load the solution classes
 		if (!empty(self::$solutions)) {

@@ -324,12 +324,16 @@ class dolibarr extends solution
                                 $countryresponse = $this->dolibarrClient->get($this->paramConnexion['url'].$this->dolibarrurl.'/setup/dictionary/countries/byCode/'.$value->country_code);
                                 $countryname = json_decode($countryresponse);
                                 $value->country = $countryname->label;
+                            } else {
+                                $value->country = '';
                             }
 
                             if($value->state_id) {
                                 $stateresponse = $this->dolibarrClient->get($this->paramConnexion['url'].$this->dolibarrurl.'/setup/dictionary/states/'.$value->state_id);
                                 $statename = json_decode($stateresponse);
                                 $value->state = $statename->name;
+                            } else {
+                                $value->state = '';
                             }
 
                             $value->date_modification = date('Y-m-d H:i:s', $value->date_modification);
@@ -403,8 +407,19 @@ class dolibarr extends solution
                                     $value->soc_code_client = $socresponseobj->code_client;
                                     $value->soc_code_fournisseur = $socresponseobj->code_fournisseur;
                                     $value->soc_email = $socresponseobj->email;
+                                } else {
+                                    $value->soc_name = '';
+                                    $value->soc_name_alias = '';
+                                    $value->soc_code_client = '';
+                                    $value->soc_code_fournisseur = '';
+                                    $value->soc_email = '';
                                 }
-                
+                            } else {
+                                $value->soc_name = '';
+                                $value->soc_name_alias = '';
+                                $value->soc_code_client = '';
+                                $value->soc_code_fournisseur = '';
+                                $value->soc_email = '';
                             }
                             if($param['module'] == 'supplierinvoices') {
                                 $value->date_creation = date('Y-m-d H:i:s', $value->datec);

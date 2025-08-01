@@ -732,175 +732,110 @@ class quickbooks extends solution
                         }
                     }
 
-                    $dataLine = array();
-                    if($parameter['Line'] && is_array($parameter['Line'])) {
-                        $finalAmount = 0;
-                        $discountAmount = 0;
-                        // var_dump($parameter['Line']);
-                        foreach($parameter['Line'] as $val) {
-                            $ProductName = $val['product_ref'];
-                            $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
-                            if(isset($qbProduct) && !empty($qbProduct) && count($qbProduct) > 0) {
-                                $qbProductId = $qbProduct[0]->Id;
-                            } else {
-                                $qbProductId = '';
-                            }
-
-                            if($param['module'] == 'Bill') {
-
-                                if($val['remise_percent']) {
-                                    $totalamount = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice']*$val['qty'] : $val['subprice']*$val['qty']);
-                                    $UnitPrice = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice'] : $val['subprice']);
-                                    $linediscountAmount = $UnitPrice - ($UnitPrice * $val['remise_percent']) / 100;
-                                    $LinediscountTotalAmount = $linediscountAmount*$val['qty'];
-                                    $discountAmount += ($totalamount * $val['remise_percent']) / 100;
-                                    $finalAmount += $totalamount - $discountAmount;
-                                } else {
-                                    $totalamount = ($parameter['Multicurrency'] == true ? $val['multicurrency_total_ht'] : $val['total_ht']);
-                                    $LinediscountTotalAmount = $totalamount;
-                                    $finalAmount += 0;
-                                    $discountAmount += 0;
-                                    $UnitPrice = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice'] : $val['subprice']);
-                                    $linediscountAmount = $UnitPrice;
-                                }
-
-                                if($val['tva_tx'] == 0 || $val['tva_tx'] == "0" || $val['tva_tx'] == "0.0000") {
-                                    $taxvalue = "NON";
-                                } else {
-                                    $taxvalue = 'TAX';
-                                }
-
-                                if($val['product_ref'] == '' || $val['product_ref'] == null) {
-                                    if($val['description']) {
-                                        $descVal = strip_tags($val['description']);
-                                    } else {
-                                        $descVal = '';
-                                    }
-                                    $itemrefName = '';
-                                    $itemrefArray['name'] = "Services";
-                                    $itemAccountRef = ["value" => "1"];
-                                    $itemrefArray['value'] = '1';
-                                } else {
-                                    if($val['description']) {
-                                        $descVal = strip_tags($val['description']);
-                                    } else {
-                                        $descVal = '';
-                                    }
-                                    $itemrefName = "Services";
-                                    $itemrefArray['name'] = '';
-                                    $itemrefArray['value'] = $qbProductId;
-                                }
-
-                                $dataLineItem = [
-                                    "TaxInclusiveAmt" => ($parameter['Multicurrency'] == true ? $val['multicurrency_total_ttc'] : $val['total_ttc']),
-                                    "ItemRef" => $itemrefArray,
-                                    "TaxCodeRef" => [
-                                        "value" => $taxvalue
-                                    ],
-                                    "Qty" => $val['qty'],
-                                    "UnitPrice" => $linediscountAmount,
-                                ];
-
-                                // Add ItemAccountRef only if it was set
-                                if ($itemAccountRef) {
-                                    $dataLineItem["ItemAccountRef"] = $itemAccountRef;
-                                }
-
-                                $dataLine[] = [
-                                    "Amount" => $LinediscountTotalAmount,
-                                    "DetailType" => $parameter['DetailType'],
-                                    "Description" => $descVal,
-                                    $parameter['DetailType'] => $dataLineItem
-                                ];
-
-                                // $dataLine[] = [
-                                //     "Amount" => $val['total_ht'],
-                                //     "DetailType" => $parameter['DetailType'],
-                                //     $parameter['DetailType'] => [
-                                //         "TaxCodeRef" => [
-                                //             "value" => $taxvalue
-                                //         ],
-                                //         "TaxInclusiveAmt" => $val['total_ht'],
-                                //         "ItemRef" => [
-                                //             "value" => $qbProductId
-                                //         ],
-                                //         "Qty" => $val['qty'],
-                                //         // "UnitPrice" => $val['subprice'],
-                                //     ]
-                                // ];
-                            } else {
-                                if($val['remise_percent']) {
-                                    $totalamount = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice']*$val['qty'] : $val['subprice']*$val['qty']);
-                                    $UnitPrice = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice'] : $val['subprice']);
-                                    $linediscountAmount = $UnitPrice - ($UnitPrice * $val['remise_percent']) / 100;
-                                    $LinediscountTotalAmount = $linediscountAmount*$val['qty'];
-                                    $discountAmount += ($totalamount * $val['remise_percent']) / 100;
-                                    $finalAmount += $totalamount - $discountAmount;
-                                } else {
-                                    $totalamount = ($parameter['Multicurrency'] == true ? $val['multicurrency_total_ht'] : $val['total_ht']);
-                                    $LinediscountTotalAmount = $totalamount;
-                                    $finalAmount += 0;
-                                    $discountAmount += 0;
-                                    $UnitPrice = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice'] : $val['subprice']);
-                                    $linediscountAmount = $UnitPrice;
-                                }
-                                
-                                if($val['tva_tx'] == 0 || $val['tva_tx'] == "0" || $val['tva_tx'] == "0.0000") {
-                                    	$taxvalue = "NON";
-					if (!(empty($parameter['LineTaxCodeExemptRef']))) {
-                                                $taxvalue = $parameter['LineTaxCodeExemptRef'];
-                                        }
-                                } else {
-                                	$taxvalue = 'TAX';
-					if (!(empty($parameter['LineTaxCodeRef']))) {
-                                        	$taxvalue = $parameter['LineTaxCodeRef'];
-                                	}
-                                }
-
-                                // var_dump($val['desc']);
-                                if($val['product_ref'] == '' || $val['product_ref'] == null) {
-                                    if($val['desc']) {
-                                        $descVal = strip_tags($val['desc']);
-                                    } else {
-                                        $descVal = '';
-                                    }
-                                    $itemrefName = '';
-                                    $itemrefArray['name'] = "Services";
-                                    
-                                    $itemAccountRef = ["value" => "1"];
-                                    $itemrefArray['value'] = '1';
-                                } else {
-                                    $descVal = strip_tags($val['desc']);
-                                    $itemrefName = "Services";
-                                    $itemrefArray['name'] = '';
-                                    $itemrefArray['value'] = $qbProductId;
-                                }
-
-                                $dataLineItem = [
-                                    "TaxInclusiveAmt" => ($parameter['Multicurrency'] == true ? $val['multicurrency_total_ttc'] : $val['total_ttc']),
-                                    "ItemRef" => $itemrefArray,
-                                    "TaxCodeRef" => [
-                                        "value" => $taxvalue
-                                    ],
-                                    "Qty" => $val['qty'],
-                                    "UnitPrice" => (($parameter['Multicurrency'] == true) ? (($parameter['DiscountAccount'] == true) ? $linediscountAmount : $val['multicurrency_subprice']) : (($parameter['DiscountAccount'] == true) ? $linediscountAmount : $val['subprice'])),
-                                ];
-
-                                // Add ItemAccountRef only if it was set
-                                if ($itemAccountRef) {
-                                    $dataLineItem["ItemAccountRef"] = $itemAccountRef;
-                                }
-
-                                $dataLine[] = [
-                                    "Amount" => ($parameter['DiscountAccount'] == true ? $LinediscountTotalAmount : $totalamount),
-                                    "DetailType" => $parameter['DetailType'],
-                                    "Description" => $descVal,
-                                    $parameter['DetailType'] => $dataLineItem
-                                ];
-                            }
+                    if($param['module'] == 'Bill')  {
+                        if (!isset($parameter['DetailType']) || empty($parameter['DetailType'])) {
+                            $parameter['DetailType'] = 'ItemBasedExpenseLineDetail'; // Default value
                         }
                     }
 
+                    if($param['module'] == 'Invoice') {
+                        if (!isset($parameter['DetailType']) || empty($parameter['DetailType'])) {
+                            $parameter['DetailType'] = 'SalesItemLineDetail'; // Default value
+                        }
+                    }
+                    
+
+                    $dataLine = array();
+
+                    if ($parameter['Line'] && is_array($parameter['Line'])) {
+                        $isMulticurrency = $parameter['Multicurrency'] ?? false;
+                        $hasDiscountAccount = $parameter['DiscountAccount'] ?? false;
+                        $finalAmount = 0;
+                        $discountAmount = 0;
+
+                        foreach ($parameter['Line'] as $val) {
+                            $ProductName = $val['product_ref'] ?? '';
+                            $qbProductId = '';
+                            
+                            if (!empty($ProductName)) {
+                                try {
+                                    $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
+                                    if (!empty($qbProduct)) {
+                                        $qbProductId = $qbProduct[0]->Id;
+                                    }
+                                } catch (Exception $e) {
+                                    // Log error but continue
+                                    error_log("QuickBooks product query failed: " . $e->getMessage());
+                                }
+                            }
+
+                            // 2. Handle tax code
+                            $taxvalue = "NON"; // Default
+                            if (!empty($val['tva_tx']) && floatval($val['tva_tx']) > 0) {
+                                $taxvalue = $parameter['LineTaxCodeRef'] ?? 'TAX';
+                            } elseif (!empty($parameter['LineTaxCodeExemptRef'])) {
+                                $taxvalue = $parameter['LineTaxCodeExemptRef'];
+                            }
+
+                            // 3. Handle description
+                            $descVal = strip_tags($val['desc'] ?? $val['description'] ?? '');
+
+                            // 4. Handle ItemRef
+                            $itemrefArray = [
+                                'name' => $ProductName ?: 'Services',
+                                'value' => $qbProductId ?: '1'
+                            ];
+
+                            // 5. Calculate amounts
+                            $subprice = $isMulticurrency ? ($val['multicurrency_subprice'] ?? 0) : ($val['subprice'] ?? 0);
+                            $qty = $val['qty'] ?? 1;
+                            
+                            if (!empty($val['remise_percent'])) {
+                                $discountPercent = floatval($val['remise_percent']);
+                                $linediscountAmount = $subprice * (1 - ($discountPercent / 100));
+                                $LinediscountTotalAmount = $linediscountAmount * $qty;
+                                $discountAmount += ($subprice * $qty) * ($discountPercent / 100);
+                            } else {
+                                $linediscountAmount = $subprice;
+                                $LinediscountTotalAmount = $subprice * $qty;
+                            }
+                            
+                            $finalAmount += $LinediscountTotalAmount;
+
+                            // 6. Build line item
+                            $dataLineItem = [
+                                "TaxInclusiveAmt" => $isMulticurrency ? ($val['multicurrency_total_ttc'] ?? 0) : ($val['total_ttc'] ?? 0),
+                                "ItemRef" => $itemrefArray,
+                                "TaxCodeRef" => ["value" => $taxvalue],
+                                "Qty" => $qty,
+                                "UnitPrice" => $hasDiscountAccount ? $linediscountAmount : $subprice,
+                            ];
+
+                            // Add ItemAccountRef if product not found
+                            if (empty($qbProductId)) {
+                                $dataLineItem["ItemAccountRef"] = ["value" => "1"];
+                            }
+
+                            if($param['module'] == 'Bill')  {
+                                $dataLine[] = [
+                                    "Amount" => $LinediscountTotalAmount,
+                                    "DetailType" => $parameter['DetailType'] ?? 'ItemBasedExpenseLineDetail',
+                                    "Description" => $descVal,
+                                    ($parameter['DetailType'] ?? 'ItemBasedExpenseLineDetail') => $dataLineItem
+                                ];
+                            }
+
+                            if($param['module'] == 'Invoice') {
+                                $dataLine[] = [
+                                    "Amount" => $LinediscountTotalAmount,
+                                    "DetailType" => $parameter['DetailType'] ?? 'SalesItemLineDetail',
+                                    "Description" => $descVal,
+                                    ($parameter['DetailType'] ?? 'SalesItemLineDetail') => $dataLineItem
+                                ];
+                            }
+                            
+                        }
+                    }
 
                     if($dataLine) {
                         if($param['module'] == 'Invoice') {
@@ -941,7 +876,7 @@ class quickbooks extends solution
 
                     unset($parameter['DiscountAccount']);
                     unset($parameter['LineTaxCodeRef']);
-		    unset($parameter['LineTaxCodeExemptRef']);
+		            unset($parameter['LineTaxCodeExemptRef']);
 
                     // var_dump($parameter);
                     if($parameter) {
@@ -1412,178 +1347,112 @@ class quickbooks extends solution
                         }
                     }
 
-                    $dataLine = array();
-                    if($parameter['Line'] && is_array($parameter['Line'])) {
-                        $finalAmount = 0;
-                        $discountAmount = 0;
-                        // var_dump($parameter['Line']);
-                        foreach($parameter['Line'] as $val) {
-                            $ProductName = $val['product_ref'];
-                            $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
-                            if(isset($qbProduct) && !empty($qbProduct) && count($qbProduct) > 0) {
-                                $qbProductId = $qbProduct[0]->Id;
-                            } else {
-                                $qbProductId = '';
-                            }
-
-                            if($param['module'] == 'Bill') {
-                                
-                                if($val['remise_percent']) {
-                                    $totalamount = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice']*$val['qty'] : $val['subprice']*$val['qty']);
-                                    $UnitPrice = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice'] : $val['subprice']);
-                                    $linediscountAmount = $UnitPrice - ($UnitPrice * $val['remise_percent']) / 100;
-                                    $LinediscountTotalAmount = $linediscountAmount*$val['qty'];
-                                    $discountAmount += ($totalamount * $val['remise_percent']) / 100;
-                                    $finalAmount += $totalamount - $discountAmount;
-                                } else {
-                                    $totalamount = ($parameter['Multicurrency'] == true ? $val['multicurrency_total_ht'] : $val['total_ht']);
-                                    $LinediscountTotalAmount = $totalamount;
-                                    $finalAmount += 0;
-                                    $discountAmount += 0;
-                                    $UnitPrice = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice'] : $val['subprice']);
-                                    $linediscountAmount = $UnitPrice;
-                                }
-
-                                if($val['tva_tx'] == 0 || $val['tva_tx'] == "0" || $val['tva_tx'] == "0.0000") {
-                                    $taxvalue = "NON";
-                                } else {
-                                    $taxvalue = 'TAX';
-                                }
-
-                                if($val['product_ref'] == '' || $val['product_ref'] == null) {
-                                    if($val['description']) {
-                                        $descVal = strip_tags($val['description']);
-                                    } else {
-                                        $descVal = '';
-                                    }
-                                    $itemrefName = '';
-                                    $itemrefArray['name'] = "Services";
-                                    $itemAccountRef = ["value" => "1"];
-                                    $itemrefArray['value'] = '1';
-                                } else {
-                                    if($val['description']) {
-                                        $descVal = strip_tags($val['description']);
-                                    } else {
-                                        $descVal = '';
-                                    }
-                                    $itemrefName = "Services";
-                                    $itemrefArray['name'] = '';
-                                    $itemrefArray['value'] = $qbProductId;
-                                }
-
-                                $dataLineItem = [
-                                    "TaxInclusiveAmt" => ($parameter['Multicurrency'] == true ? $val['multicurrency_total_ttc'] : $val['total_ttc']),
-                                    "ItemRef" => $itemrefArray,
-                                    "TaxCodeRef" => [
-                                        "value" => $taxvalue
-                                    ],
-                                    "Qty" => $val['qty'],
-                                    "UnitPrice" => $linediscountAmount,
-                                ];
-
-                                // Add ItemAccountRef only if it was set
-                                if ($itemAccountRef) {
-                                    $dataLineItem["ItemAccountRef"] = $itemAccountRef;
-                                }
-
-                                $dataLine[] = [
-                                    "Amount" => $LinediscountTotalAmount,
-                                    "DetailType" => $parameter['DetailType'],
-                                    "Description" => $descVal,
-                                    $parameter['DetailType'] => $dataLineItem
-                                ];
-
-                                // $dataLine[] = [
-                                //     "Amount" => $val['total_ht'],
-                                //     "DetailType" => $parameter['DetailType'],
-                                //     $parameter['DetailType'] => [
-                                //         "TaxCodeRef" => [
-                                //             "value" => $taxvalue
-                                //         ],
-                                //         "TaxInclusiveAmt" => $val['total_ht'],
-                                //         "ItemRef" => [
-                                //             "value" => $qbProductId
-                                //         ],
-                                //         "Qty" => $val['qty'],
-                                //         // "UnitPrice" => $val['subprice'],
-                                //     ]
-                                // ];
-                            } else {
-                                if($val['remise_percent']) {
-                                    $totalamount = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice']*$val['qty'] : $val['subprice']*$val['qty']);
-                                    $UnitPrice = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice'] : $val['subprice']);
-                                    $linediscountAmount = $UnitPrice - ($UnitPrice * $val['remise_percent']) / 100;
-                                    $LinediscountTotalAmount = $linediscountAmount*$val['qty'];
-                                    $discountAmount += ($totalamount * $val['remise_percent']) / 100;
-                                    $finalAmount += $totalamount - $discountAmount;
-                                } else {
-                                    $totalamount = ($parameter['Multicurrency'] == true ? $val['multicurrency_total_ht'] : $val['total_ht']);
-                                    $LinediscountTotalAmount = $totalamount;
-                                    $finalAmount += 0;
-                                    $discountAmount += 0;
-                                    $UnitPrice = ($parameter['Multicurrency'] == true ? $val['multicurrency_subprice'] : $val['subprice']);
-                                    $linediscountAmount = $UnitPrice;
-                                }
-                                
-                                if($val['tva_tx'] == 0 || $val['tva_tx'] == "0" || $val['tva_tx'] == "0.0000") {
-                                    	$taxvalue = "NON";
-					if (!(empty($parameter['LineTaxCodeExemptRef']))) {
-                                                $taxvalue = $parameter['LineTaxCodeExemptRef'];
-                                        }
-                                } else {
-                                    	$taxvalue = 'TAX';
-					if (!(empty($parameter['LineTaxCodeRef']))) {
-                                        	$taxvalue = $parameter['LineTaxCodeRef'];
-                                	}
-                                }
-
-                                // var_dump($val['desc']);
-                                if($val['product_ref'] == '' || $val['product_ref'] == null) {
-                                    if($val['desc']) {
-                                        $descVal = strip_tags($val['desc']);
-                                    } else {
-                                        $descVal = '';
-                                    }
-                                    $itemrefName = '';
-                                    $itemrefArray['name'] = "Services";
-                                    // "ItemAccountRef": {
-                                    //     "value": "1",
-                                    //     "name": "Services"
-                                    //    },
-                                    $itemAccountRef = ["value" => "1"];
-                                    $itemrefArray['value'] = '1';
-                                } else {
-                                    $descVal = strip_tags($val['desc']);
-                                    $itemrefName = "Services";
-                                    $itemrefArray['name'] = '';
-                                    $itemrefArray['value'] = $qbProductId;
-                                }
-
-                                $dataLineItem = [
-                                    "TaxInclusiveAmt" => ($parameter['Multicurrency'] == true ? $val['multicurrency_total_ttc'] : $val['total_ttc']),
-                                    "ItemRef" => $itemrefArray,
-                                    "TaxCodeRef" => [
-                                        "value" => $taxvalue
-                                    ],
-                                    "Qty" => $val['qty'],
-                                    "UnitPrice" => (($parameter['Multicurrency'] == true) ? (($parameter['DiscountAccount'] == true) ? $linediscountAmount : $val['multicurrency_subprice']) : (($parameter['DiscountAccount'] == true) ? $linediscountAmount : $val['subprice'])),
-                                ];
-
-                                // Add ItemAccountRef only if it was set
-                                if ($itemAccountRef) {
-                                    $dataLineItem["ItemAccountRef"] = $itemAccountRef;
-                                }
-
-                                $dataLine[] = [
-                                    "Amount" => ($parameter['DiscountAccount'] == true ? $LinediscountTotalAmount : $totalamount),
-                                    "DetailType" => $parameter['DetailType'],
-                                    "Description" => $descVal,
-                                    $parameter['DetailType'] => $dataLineItem
-                                ];
-                            }
+                    if($param['module'] == 'Bill')  {
+                        if (!isset($parameter['DetailType']) || empty($parameter['DetailType'])) {
+                            $parameter['DetailType'] = 'ItemBasedExpenseLineDetail'; // Default value
                         }
                     }
 
+                    if($param['module'] == 'Invoice') {
+                        if (!isset($parameter['DetailType']) || empty($parameter['DetailType'])) {
+                            $parameter['DetailType'] = 'SalesItemLineDetail'; // Default value
+                        }
+                    }
+
+                    $dataLine = array();
+
+                    if ($parameter['Line'] && is_array($parameter['Line'])) {
+                        // Set default values for optional parameters
+                        $isMulticurrency = $parameter['Multicurrency'] ?? false;
+                        $hasDiscountAccount = $parameter['DiscountAccount'] ?? false;
+                        $finalAmount = 0;
+                        $discountAmount = 0;
+
+                        foreach ($parameter['Line'] as $val) {
+                            // 1. Handle product reference and query
+                            $ProductName = $val['product_ref'] ?? '';
+                            $qbProductId = '';
+                            
+                            if (!empty($ProductName)) {
+                                try {
+                                    $qbProduct = $this->dataService->Query("SELECT * FROM Item WHERE Name = '".$ProductName."'");
+                                    if (!empty($qbProduct)) {
+                                        $qbProductId = $qbProduct[0]->Id;
+                                    }
+                                } catch (Exception $e) {
+                                    // Log error but continue
+                                    // error_log("QuickBooks product query failed: " . $e->getMessage());
+                                }
+                            }
+
+                            // 2. Handle tax code
+                            $taxvalue = "NON"; // Default
+                            if (!empty($val['tva_tx']) && floatval($val['tva_tx']) > 0) {
+                                $taxvalue = $parameter['LineTaxCodeRef'] ?? 'TAX';
+                            } elseif (!empty($parameter['LineTaxCodeExemptRef'])) {
+                                $taxvalue = $parameter['LineTaxCodeExemptRef'];
+                            }
+
+                            // 3. Handle description
+                            $descVal = strip_tags($val['desc'] ?? $val['description'] ?? '');
+
+                            // 4. Handle ItemRef
+                            $itemrefArray = [
+                                'name' => $ProductName ?: 'Services',
+                                'value' => $qbProductId ?: '1'
+                            ];
+
+                            // 5. Calculate amounts
+                            $subprice = $isMulticurrency ? ($val['multicurrency_subprice'] ?? 0) : ($val['subprice'] ?? 0);
+                            $qty = $val['qty'] ?? 1;
+                            
+                            if (!empty($val['remise_percent'])) {
+                                $discountPercent = floatval($val['remise_percent']);
+                                $linediscountAmount = $subprice * (1 - ($discountPercent / 100));
+                                $LinediscountTotalAmount = $linediscountAmount * $qty;
+                                $discountAmount += ($subprice * $qty) * ($discountPercent / 100);
+                            } else {
+                                $linediscountAmount = $subprice;
+                                $LinediscountTotalAmount = $subprice * $qty;
+                            }
+                            
+                            $finalAmount += $LinediscountTotalAmount;
+
+                            // 6. Build line item
+                            $dataLineItem = [
+                                "TaxInclusiveAmt" => $isMulticurrency ? ($val['multicurrency_total_ttc'] ?? 0) : ($val['total_ttc'] ?? 0),
+                                "ItemRef" => $itemrefArray,
+                                "TaxCodeRef" => ["value" => $taxvalue],
+                                "Qty" => $qty,
+                                "UnitPrice" => $hasDiscountAccount ? $linediscountAmount : $subprice,
+                            ];
+
+                            // Add ItemAccountRef if product not found
+                            if (empty($qbProductId)) {
+                                $dataLineItem["ItemAccountRef"] = ["value" => "1"];
+                            }
+                            // ItemBasedExpenseLineDetail
+
+                            if($param['module'] == 'Bill')  {
+                                $dataLine[] = [
+                                    "Amount" => $LinediscountTotalAmount,
+                                    "DetailType" => $parameter['DetailType'] ?? 'ItemBasedExpenseLineDetail',
+                                    "Description" => $descVal,
+                                    ($parameter['DetailType'] ?? 'ItemBasedExpenseLineDetail') => $dataLineItem
+                                ];
+                            }
+
+                            if($param['module'] == 'Invoice') {
+                                $dataLine[] = [
+                                    "Amount" => $LinediscountTotalAmount,
+                                    "DetailType" => $parameter['DetailType'] ?? 'SalesItemLineDetail',
+                                    "Description" => $descVal,
+                                    ($parameter['DetailType'] ?? 'SalesItemLineDetail') => $dataLineItem
+                                ];
+                            }
+
+                        }
+                    }
                     
                     if($dataLine) {
                         if($param['module'] == 'Invoice') {
@@ -1624,7 +1493,7 @@ class quickbooks extends solution
 
                     unset($parameter['DiscountAccount']);
                     unset($parameter['LineTaxCodeRef']);
-		    unset($parameter['LineTaxCodeExemptRef']);
+		            unset($parameter['LineTaxCodeExemptRef']);
                     // var_dump($parameter);
                     if($parameter) {
                         if($param['module'] == 'Invoice') {
@@ -1727,6 +1596,6 @@ class quickbooks extends solution
     {
         return date('Y-m-d H:i:s', strtotime($dateTime));
     }
-    
+
 
 }

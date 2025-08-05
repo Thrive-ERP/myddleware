@@ -223,8 +223,13 @@ class quickbooks extends solution
         }
     }
 
+
     public function read($param): array
     {
+
+	if ($param['call_type'] == 'history') {
+		return array();
+	}
 
         if (empty($param['limit'])) {
             $param['limit'] = $this->limitCall;

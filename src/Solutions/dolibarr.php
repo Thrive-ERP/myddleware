@@ -278,6 +278,11 @@ class dolibarr extends solution
 
     public function read($param): array
     {
+	
+        if ($param['call_type'] == 'history') {
+                return array();
+        }
+
         try {
             $result = [];
 

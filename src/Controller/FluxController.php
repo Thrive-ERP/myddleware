@@ -828,8 +828,10 @@ $logPagination = $this->nav_pagination_logs($logParams, false);
                 'Flux/view/view.html.twig',
                 [
                     'current_document' => $id,
+		    //Begin Customisation: Function to comvert array to json as line in invoice is array there was error when opening the document
                     'source' => $this->ensureString($sourceData),
                     'target' => $this->ensureString($targetData),
+		    //End Customisation
                     'history' => $historyData,
                     'doc' => $doc[0],
                     'nb' => $compact['nb'],
@@ -867,12 +869,19 @@ $logPagination = $this->nav_pagination_logs($logParams, false);
         }
     }
 
+    //Begin Customisation: Function to comvert array to json as line in invoice is array there was error when opening the document
     private function ensureString($data) {
-        if (is_array($data) || is_object($data)) {
-            return json_encode($data);
-        }
-        return $data;
+	$transformed_data = array();
+	foreach ($data as $key => $value) {
+		if (is_array($value) || is_object($value)) {
+			$transformed_data[$key] = json_encode($value);
+		} else {
+			$transformed_data[$key] = $value;
+		}
+	}
+        return $transformed_data;
     }
+    //End Customisation
 
     /**
      * @Route("/flux/save", name="flux_save")

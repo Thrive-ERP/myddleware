@@ -56,7 +56,9 @@ final class CronRunCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 		if (!$this->toolsManager->isPremium()) {
+			//Begin Customisation: To rin cron from cli
 //			return $this->redirectToRoute('premium_list');
+			//End Customisation
 		}
         $jobRepo = $this->getCronJobRepository();
         $style = new CronStyle($input, $output);

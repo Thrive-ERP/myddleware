@@ -55,7 +55,9 @@ use App\Solutions\suitecrm;
 use App\Solutions\vtigercrm;
 use App\Solutions\woocommerce;
 use App\Solutions\wooeventmanager;
+//Begin Customisation: Wordpress class files donot exists
 //use App\Solutions\wordpress;
+//End Cistomisation
 use App\Solutions\yousign;
 use App\Solutions\zuora;
 use App\Solutions\dolibarr;

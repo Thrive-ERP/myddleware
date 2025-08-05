@@ -55,7 +55,7 @@ use App\Solutions\suitecrm;
 use App\Solutions\vtigercrm;
 use App\Solutions\woocommerce;
 use App\Solutions\wooeventmanager;
-use App\Solutions\wordpress;
+//use App\Solutions\wordpress;
 use App\Solutions\yousign;
 use App\Solutions\zuora;
 use App\Solutions\dolibarr;

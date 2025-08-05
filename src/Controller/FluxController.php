@@ -828,8 +828,8 @@ $logPagination = $this->nav_pagination_logs($logParams, false);
                 'Flux/view/view.html.twig',
                 [
                     'current_document' => $id,
-                    'source' => $sourceData,
-                    'target' => $targetData,
+                    'source' => $this->ensureString($sourceData),
+                    'target' => $this->ensureString($targetData),
                     'history' => $historyData,
                     'doc' => $doc[0],
                     'nb' => $compact['nb'],
@@ -865,6 +865,13 @@ $logPagination = $this->nav_pagination_logs($logParams, false);
         } catch (Exception $e) {
             throw $this->createNotFoundException('Page not found.'.$e->getMessage().' '.$e->getFile().' '.$e->getLine());
         }
+    }
+
+    private function ensureString($data) {
+        if (is_array($data) || is_object($data)) {
+            return json_encode($data);
+        }
+        return $data;
     }
 
     /**

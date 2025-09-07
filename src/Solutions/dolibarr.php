@@ -372,7 +372,7 @@ class dolibarr extends solution
                         $responseobj = json_decode($response);
                         $moduleArray = array();
                         foreach($responseobj as $value) {
-                            $value->date_modification = $value->date_modification;
+                            $value->date_modification = date('Y-m-d H:i:s', $value->date_modification);
                             $result[] = (array)$value;
                         }
                     }
@@ -934,14 +934,23 @@ class dolibarr extends solution
     */
     protected function dateTimeFromMyddleware($dateTime)
     {
-        $date = new \DateTime($dateTime);
-
+	if (is_numeric($dateTime)) {
+                $date = new \DateTime();
+                $date->setTimestamp((int)$dateTime);
+        } else {
+        	$date = new \DateTime($dateTime);
+	}
         return $date->format('U');
     }
 
     protected function dolibarrApiDateFormate($dateTime) {
 
-        $date = new \DateTime($dateTime);
+	if (is_numeric($dateTime)) {
+		$date = new \DateTime();
+		$date->setTimestamp((int)$dateTime);
+	} else {
+        	$date = new \DateTime($dateTime);
+	}
 
         return $date->format('YmdHis');
     }
